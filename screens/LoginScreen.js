@@ -13,11 +13,17 @@ import {
 } from 'react-native';
 import { authService } from '../Api/auth';
 
+
 function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleSignUp = () =>
+  {
+    navigation.navigate('SignUpChoice');
+  }
 
   const handleLogin = async () => {
     console.log('Entrer a la fct');
@@ -118,7 +124,7 @@ function LoginScreen({ navigation }) {
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account? </Text>
-          <TouchableOpacity disabled={loading}>
+          <TouchableOpacity disabled={loading} onPress={handleSignUp}>
             <Text style={styles.signupLink}>Sign Up</Text>
           </TouchableOpacity>
         </View>
