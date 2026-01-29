@@ -12,7 +12,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import { authService } from '../Api/auth';
+import { authService } from '../../../Api/auth';
 
 function ClientSignUpScreen({ navigation }) {
   const [formData, setFormData] = useState({
@@ -104,7 +104,7 @@ function ClientSignUpScreen({ navigation }) {
 
         <View style={styles.logoContainer}>
           <Image
-            source={require('../assets/images/logo.png')}
+            source={require('../../../assets/images/logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />

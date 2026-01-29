@@ -11,13 +11,14 @@ import {
   ScrollView,
 } from 'react-native';
 
-function RestaurantSignUpStep3({ navigation, route }) {
+function RestaurantSignUpStep2({ navigation, route }) {
   const existingData = route?.params?.formData || {};
   
   const [formData, setFormData] = useState({
-    openingHours: existingData.openingHours || '',
-    pickupTimeStart: existingData.pickupTimeStart || '',
-    pickupTimeEnd: existingData.pickupTimeEnd || '',
+    restaurantName: existingData.restaurantName || '',
+    restaurantAddress: existingData.restaurantAddress || '',
+    cuisineType: existingData.cuisineType || '',
+    restaurantDescription: existingData.restaurantDescription || '',
   });
   
   const [error, setError] = useState('');
@@ -27,20 +28,26 @@ function RestaurantSignUpStep3({ navigation, route }) {
     setError('');
   };
 
-  const validateAndContinue = () => {
-    if (!formData.openingHours || !formData.pickupTimeStart || !formData.pickupTimeEnd) {
-      setError('Please fill in all required fields');
-      return;
-    }
+  // const validateAndContinue = () => {
+  //   if (!formData.restaurantName || !formData.restaurantAddress || !formData.cuisineType) {
+  //     setError('Please fill in all required fields');
+  //     return;
+  //   }
 
-    // Navigate to step 4 with accumulated data
-    navigation.navigate('RestaurantSignUpStep4', {
+  //   // Navigate to step 3 with accumulated data
+  //   navigation.navigate('RestaurantSignUpStep3', {
+  //     formData: { ...existingData, ...formData }
+  //   });
+  // };
+
+
+   const validateAndContinue = () => {
+     navigation.navigate('RestaurantLocationChoice', {
       formData: { ...existingData, ...formData }
     });
-  };
-
+   }
   const goBack = () => {
-    navigation.navigate('RestaurantSignUpStep2', {
+    navigation.navigate('RestaurantSignUpStep1', {
       formData: { ...existingData, ...formData }
     });
   };
@@ -63,7 +70,7 @@ function RestaurantSignUpStep3({ navigation, route }) {
 
         <View style={styles.logoContainer}>
           <Image
-            source={require('../assets/images/logo.png')}
+            source={require('../../../assets/images/logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -73,16 +80,17 @@ function RestaurantSignUpStep3({ navigation, route }) {
           <View style={styles.progressBar}>
             <View style={[styles.progressStep, styles.progressStepActive]} />
             <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
+            <View style={styles.progressStep} />
+            <View style={styles.progressStep} />
             <View style={styles.progressStep} />
           </View>
-          <Text style={styles.progressText}>Step 3 of 4</Text>
+          <Text style={styles.progressText}>Step 2 of 5</Text>
         </View>
 
         <View style={styles.formHeader}>
-          <Text style={styles.formTitle}>Operating Hours</Text>
+          <Text style={styles.formTitle}>Restaurant Information</Text>
           <Text style={styles.formSubtitle}>
-            When can customers find you?
+            Tell us about your restaurant
           </Text>
         </View>
 
@@ -93,39 +101,35 @@ function RestaurantSignUpStep3({ navigation, route }) {
             </View>
           ) : null}
 
-          <Text style={styles.sectionTitle}>⏰ Operating Hours</Text>
+          <Text style={styles.sectionTitle}>Basic Information</Text>
+          
+          <TextInput
+            style={styles.input}
+            placeholder="Restaurant name *"
+            placeholderTextColor="#999"
+            value={formData.restaurantName}
+            onChangeText={(text) => updateFormData('restaurantName', text)}
+          />
 
           <TextInput
             style={styles.input}
-            placeholder="Opening hours * (e.g., 09:00 - 22:00)"
+            placeholder="Cuisine type * "
             placeholderTextColor="#999"
-            value={formData.openingHours}
-            onChangeText={(text) => updateFormData('openingHours', text)}
+            value={formData.cuisineType}
+            onChangeText={(text) => updateFormData('cuisineType', text)}
           />
 
-          <Text style={styles.subSectionTitle}>Pickup Time Window</Text>
+          <Text style={styles.sectionTitle}>Description (Optional)</Text>
 
-          <View style={styles.rowInputs}>
-            <TextInput
-              style={[styles.input, styles.halfInput]}
-              placeholder="Start time *"
-              placeholderTextColor="#999"
-              value={formData.pickupTimeStart}
-              onChangeText={(text) => updateFormData('pickupTimeStart', text)}
-            />
-
-            <TextInput
-              style={[styles.input, styles.halfInput]}
-              placeholder="End time *"
-              placeholderTextColor="#999"
-              value={formData.pickupTimeEnd}
-              onChangeText={(text) => updateFormData('pickupTimeEnd', text)}
-            />
-          </View>
-
-          <Text style={styles.helperText}>
-            ⏱️ When can customers pick up their orders?
-          </Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Tell customers about your restaurant..."
+            placeholderTextColor="#999"
+            value={formData.restaurantDescription}
+            onChangeText={(text) => updateFormData('restaurantDescription', text)}
+            multiline
+            numberOfLines={4}
+          />
 
           <TouchableOpacity
             style={styles.continueButton}
@@ -156,7 +160,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#5a2c1c',
     fontWeight: '600',
-    marginTop: 15
+    marginTop:15
   },
   logoContainer: {
     alignItems: 'center',
@@ -221,13 +225,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginTop: 5,
   },
-  subSectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 10,
-    marginTop: 5,
-  },
   errorContainer: {
     backgroundColor: '#ffebee',
     borderRadius: 8,
@@ -250,20 +247,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
-  rowInputs: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  halfInput: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  helperText: {
-    fontSize: 12,
-    color: '#999',
-    marginBottom: 20,
-    marginTop: -10,
-    fontStyle: 'italic',
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
   },
   continueButton: {
     backgroundColor: '#5a2c1c',
@@ -284,4 +270,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RestaurantSignUpStep3;
+export default RestaurantSignUpStep2;

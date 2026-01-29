@@ -11,14 +11,15 @@ import {
   ScrollView,
 } from 'react-native';
 
-function RestaurantSignUpStep2({ navigation, route }) {
+function RestaurantSignUpStep1({ navigation, route }) {
   const existingData = route?.params?.formData || {};
   
   const [formData, setFormData] = useState({
-    restaurantName: existingData.restaurantName || '',
-    restaurantAddress: existingData.restaurantAddress || '',
-    cuisineType: existingData.cuisineType || '',
-    restaurantDescription: existingData.restaurantDescription || '',
+    ownerFullName: existingData.ownerFullName || '',
+    ownerEmail: existingData.ownerEmail || '',
+    ownerPassword: existingData.ownerPassword || '',
+    ownerConfirmPassword: existingData.ownerConfirmPassword || '',
+    phoneNumber: existingData.phoneNumber || '',
   });
   
   const [error, setError] = useState('');
@@ -28,23 +29,43 @@ function RestaurantSignUpStep2({ navigation, route }) {
     setError('');
   };
 
-  const validateAndContinue = () => {
-    if (!formData.restaurantName || !formData.restaurantAddress || !formData.cuisineType) {
-      setError('Please fill in all required fields');
-      return;
-    }
+  // const validateAndContinue = () => {
+  //   if (!formData.ownerFullName || !formData.ownerEmail || !formData.ownerPassword || 
+  //       !formData.ownerConfirmPassword || !formData.phoneNumber) {
+  //     setError('Please fill in all fields');
+  //     return;
+  //   }
 
-    // Navigate to step 3 with accumulated data
-    navigation.navigate('RestaurantSignUpStep3', {
-      formData: { ...existingData, ...formData }
-    });
-  };
+  //   if (formData.ownerPassword !== formData.ownerConfirmPassword) {
+  //     setError('Passwords do not match');
+  //     return;
+  //   }
 
-  const goBack = () => {
-    navigation.navigate('RestaurantSignUpStep1', {
-      formData: { ...existingData, ...formData }
-    });
-  };
+  //   if (formData.ownerPassword.length < 6) {
+  //     setError('Password must be at least 6 characters long');
+  //     return;
+  //   }
+
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   if (!emailRegex.test(formData.ownerEmail)) {
+  //     setError('Please enter a valid email address');
+  //     return;
+  //   }
+
+  //   // Navigate to step 2 with current data
+  //   navigation.navigate('RestaurantSignUpStep2', {
+  //     formData: { ...existingData, ...formData }
+  //   });
+  // };
+
+  const validateAndContinue=()=>
+  {
+
+    navigation.navigate('RestaurantSignUpStep2', {
+     formData: { ...existingData, ...formData }
+     });
+  }
+
 
   return (
     <KeyboardAvoidingView
@@ -57,14 +78,14 @@ function RestaurantSignUpStep2({ navigation, route }) {
       >
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={goBack}
+          onPress={() => navigation.goBack()}
         >
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
 
         <View style={styles.logoContainer}>
           <Image
-            source={require('../assets/images/logo.png')}
+            source={require('../../../assets/images/logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -73,17 +94,18 @@ function RestaurantSignUpStep2({ navigation, route }) {
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
+            <View style={styles.progressStep} />
+            <View style={styles.progressStep} />
             <View style={styles.progressStep} />
             <View style={styles.progressStep} />
           </View>
-          <Text style={styles.progressText}>Step 2 of 4</Text>
+          <Text style={styles.progressText}>Step 1 of 5</Text>
         </View>
 
         <View style={styles.formHeader}>
-          <Text style={styles.formTitle}>Restaurant Information</Text>
+          <Text style={styles.formTitle}>Account Information</Text>
           <Text style={styles.formSubtitle}>
-            Tell us about your restaurant
+            Let's start with your basic details
           </Text>
         </View>
 
@@ -94,44 +116,51 @@ function RestaurantSignUpStep2({ navigation, route }) {
             </View>
           ) : null}
 
-          <Text style={styles.sectionTitle}>🏠 Basic Information</Text>
+          <Text style={styles.sectionTitle}>Owner Details</Text>
           
           <TextInput
             style={styles.input}
-            placeholder="Restaurant name *"
+            placeholder="Full name *"
             placeholderTextColor="#999"
-            value={formData.restaurantName}
-            onChangeText={(text) => updateFormData('restaurantName', text)}
-          />
-
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Restaurant address *"
-            placeholderTextColor="#999"
-            value={formData.restaurantAddress}
-            onChangeText={(text) => updateFormData('restaurantAddress', text)}
-            multiline
-            numberOfLines={2}
+            value={formData.ownerFullName}
+            onChangeText={(text) => updateFormData('ownerFullName', text)}
           />
 
           <TextInput
             style={styles.input}
-            placeholder="Cuisine type * "
+            placeholder="Email address *"
             placeholderTextColor="#999"
-            value={formData.cuisineType}
-            onChangeText={(text) => updateFormData('cuisineType', text)}
+            value={formData.ownerEmail}
+            onChangeText={(text) => updateFormData('ownerEmail', text)}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
 
-          <Text style={styles.sectionTitle}>📝 Description (Optional)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Phone number *"
+            placeholderTextColor="#999"
+            value={formData.phoneNumber}
+            onChangeText={(text) => updateFormData('phoneNumber', text)}
+            keyboardType="phone-pad"
+          />
 
           <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Tell customers about your restaurant..."
+            style={styles.input}
+            placeholder="Password *"
             placeholderTextColor="#999"
-            value={formData.restaurantDescription}
-            onChangeText={(text) => updateFormData('restaurantDescription', text)}
-            multiline
-            numberOfLines={4}
+            value={formData.ownerPassword}
+            onChangeText={(text) => updateFormData('ownerPassword', text)}
+            secureTextEntry
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm password *"
+            placeholderTextColor="#999"
+            value={formData.ownerConfirmPassword}
+            onChangeText={(text) => updateFormData('ownerConfirmPassword', text)}
+            secureTextEntry
           />
 
           <TouchableOpacity
@@ -141,6 +170,13 @@ function RestaurantSignUpStep2({ navigation, route }) {
           >
             <Text style={styles.continueButtonText}>Continue →</Text>
           </TouchableOpacity>
+
+          <View style={styles.loginLinkContainer}>
+            <Text style={styles.loginText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text style={styles.loginLink}>Sign In</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -226,7 +262,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#5a2c1c',
     marginBottom: 15,
-    marginTop: 5,
   },
   errorContainer: {
     backgroundColor: '#ffebee',
@@ -250,10 +285,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-  },
   continueButton: {
     backgroundColor: '#5a2c1c',
     borderRadius: 12,
@@ -271,6 +302,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  loginLinkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  loginText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  loginLink: {
+    color: '#5a2c1c',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
 });
 
-export default RestaurantSignUpStep2;
+export default RestaurantSignUpStep1;

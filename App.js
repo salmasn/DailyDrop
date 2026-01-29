@@ -7,13 +7,18 @@ import store from './store/store'; // 👈 Ajouté (crée ce fichier ci-dessous)
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignUpChoiceScreen from './screens/SignUpChoiceScreen';
-import ClientSignUpScreen from './screens/ClientSignUpScreen';
-import RestaurantSignUpStep1 from './screens/RestaurantSignUpStep1';
-import RestaurantSignUpStep2 from './screens/RestaurantSignUpStep2';
-import RestaurantSignUpStep3 from './screens/RestaurantSignUpStep3';
-import RestaurantSignUpStep4 from './screens/RestaurantSignUpStep4';
-import RecommendationScreen from './screens/RecommendationScreen';
-import TrackRestaurantsScreen from './screens/TrackRestaurantsScreen';
+import ClientSignUpScreen from './screens/SignUp/Client/ClientSignUpScreen';
+import RestaurantSignUpStep1 from './screens/SignUp/Owner/RestaurantSignUpStep1';
+import RestaurantSignUpStep2 from './screens/SignUp/Owner/RestaurantSignUpStep2';
+import RestaurantSignUpStep3 from './screens/SignUp/Owner/RestaurantSignUpStep3';
+import RestaurantSignUpStep4 from './screens/SignUp/Owner/RestaurantSignUpStep4';
+import RestaurantLocationChoice from './screens/SignUp/Owner/Restaurantlocationchoice';
+import RestaurantGPSLocation from './screens/SignUp/Owner/Restaurantgpslocation';
+import RestaurantMapSelection from './screens/SignUp/Owner/Restaurantmapselection';
+
+
+import RecommendationScreen from './screens/Client/RecommendationScreen';
+import TrackRestaurantsScreen from './screens/Client/TrackRestaurantsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +39,9 @@ export default function App() {
           <Stack.Screen name="RestaurantSignUpStep4" component={RestaurantSignUpStep4} />
           <Stack.Screen name="Recommendation" component={RecommendationScreen} />
           <Stack.Screen name="TrackRestaurants" component={TrackRestaurantsScreen} />
+          <Stack.Screen name="RestaurantLocationChoice" component={RestaurantLocationChoice} />
+          <Stack.Screen name="RestaurantGPSLocation" component={RestaurantGPSLocation} />
+          <Stack.Screen name="RestaurantMapSelection" component={RestaurantMapSelection} />
         </Stack.Navigator>
         <StatusBar style="light" />
       </NavigationContainer>

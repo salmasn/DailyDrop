@@ -31,13 +31,13 @@ function RestaurantSignUpStep4({ navigation, route }) {
   };
 
   const handleSignUp = async () => {
-    if (!formData.averagePriceRange) {
-      setError('Please enter the average price range');
-      return;
-    }
+    // if (!formData.averagePriceRange) {
+    //   setError('Please enter the average price range');
+    //   return;
+    // }
 
-    setLoading(true);
-    setError('');
+    // setLoading(true);
+    // setError('');
 
     // TODO: Uncomment when backend is ready
     /*
@@ -67,7 +67,7 @@ function RestaurantSignUpStep4({ navigation, route }) {
       console.log('Registration successful:', response);
 
       Alert.alert(
-        'Registration Successful! 🎉',
+        'Registration Successful!',
         'Your restaurant account has been created successfully!',
         [{ text: 'OK', onPress: () => navigation.navigate('Recommendation') }]
       );
@@ -84,7 +84,7 @@ function RestaurantSignUpStep4({ navigation, route }) {
     setTimeout(() => {
       setLoading(false);
       Alert.alert(
-        'Registration Successful! 🎉',
+        'Registration Successful!',
         'Your restaurant account has been created successfully!',
         [{ text: 'OK', onPress: () => navigation.navigate('Recommendation') }]
       );
@@ -116,7 +116,7 @@ function RestaurantSignUpStep4({ navigation, route }) {
 
         <View style={styles.logoContainer}>
           <Image
-            source={require('../assets/images/logo.png')}
+            source={require('../../../assets/images/logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -128,8 +128,9 @@ function RestaurantSignUpStep4({ navigation, route }) {
             <View style={[styles.progressStep, styles.progressStepActive]} />
             <View style={[styles.progressStep, styles.progressStepActive]} />
             <View style={[styles.progressStep, styles.progressStepActive]} />
+            <View style={[styles.progressStep, styles.progressStepActive]} />
           </View>
-          <Text style={styles.progressText}>Step 4 of 4</Text>
+          <Text style={styles.progressText}>Step 5 of 5</Text>
         </View>
 
         <View style={styles.formHeader}>
@@ -146,11 +147,11 @@ function RestaurantSignUpStep4({ navigation, route }) {
             </View>
           ) : null}
 
-          <Text style={styles.sectionTitle}>💰 Pricing Information</Text>
+          <Text style={styles.sectionTitle}>Pricing Information</Text>
           
           <TextInput
             style={styles.input}
-            placeholder="Average price range * (e.g., 50-100 MAD)"
+            placeholder="price range * (e.g., 50-100 MAD)"
             placeholderTextColor="#999"
             value={formData.averagePriceRange}
             onChangeText={(text) => updateFormData('averagePriceRange', text)}
@@ -158,14 +159,14 @@ function RestaurantSignUpStep4({ navigation, route }) {
           />
 
           <Text style={styles.helperText}>
-            💡 This helps customers know what to expect
+            This helps customers know what to expect
           </Text>
 
-          <Text style={styles.sectionTitle}>💳 Payment Methods (Optional)</Text>
+          <Text style={styles.sectionTitle}>Payment Methods (Optional)</Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Accepted payment methods (Cash, Card, Online...)"
+            placeholder="(Cash, Card, Online...)"
             placeholderTextColor="#999"
             value={formData.paymentMethods}
             onChangeText={(text) => updateFormData('paymentMethods', text)}
@@ -173,7 +174,7 @@ function RestaurantSignUpStep4({ navigation, route }) {
           />
 
           <View style={styles.summaryContainer}>
-            <Text style={styles.summaryTitle}>📋 Registration Summary</Text>
+            <Text style={styles.summaryTitle}>Registration Summary</Text>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Owner:</Text>
               <Text style={styles.summaryValue}>{existingData.ownerFullName}</Text>

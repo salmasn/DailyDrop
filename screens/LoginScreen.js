@@ -36,39 +36,7 @@ function LoginScreen({ navigation }) {
     }
   };
  
-
-
-
-
-  // const handleLogin = async () => {
-  //   console.log('Entrer a la fct');
-  //   // Validation
-  //   if (!email || !password) {
-  //     setError('Veuillez remplir tous les champs');
-  //     return;
-  //   }
-  //   setError('');
-  //   setLoading(true);
-
-  //   try {
-  //     // Appel API
-  //     const response = await authService.login(email, password);
-  //     console.log('Login successful:', response.user);
-
-  //     // Afficher un message de succès
-  //     Alert.alert(
-  //       'Connexion réussie ! 🎉',
-  //     );
-  //   } catch (err) {
-  //     console.error(' Login error:', err);
-  //     setError(err.message);
-  //     Alert.alert('Erreur de connexion', err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-
+  
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

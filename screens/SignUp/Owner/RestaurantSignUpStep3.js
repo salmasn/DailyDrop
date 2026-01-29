@@ -11,15 +11,13 @@ import {
   ScrollView,
 } from 'react-native';
 
-function RestaurantSignUpStep1({ navigation, route }) {
+function RestaurantSignUpStep3({ navigation, route }) {
   const existingData = route?.params?.formData || {};
   
   const [formData, setFormData] = useState({
-    ownerFullName: existingData.ownerFullName || '',
-    ownerEmail: existingData.ownerEmail || '',
-    ownerPassword: existingData.ownerPassword || '',
-    ownerConfirmPassword: existingData.ownerConfirmPassword || '',
-    phoneNumber: existingData.phoneNumber || '',
+    openingHours: existingData.openingHours || '',
+    pickupTimeStart: existingData.pickupTimeStart || '',
+    pickupTimeEnd: existingData.pickupTimeEnd || '',
   });
   
   const [error, setError] = useState('');
@@ -30,29 +28,15 @@ function RestaurantSignUpStep1({ navigation, route }) {
   };
 
   const validateAndContinue = () => {
-    if (!formData.ownerFullName || !formData.ownerEmail || !formData.ownerPassword || 
-        !formData.ownerConfirmPassword || !formData.phoneNumber) {
-      setError('Please fill in all fields');
-      return;
-    }
+    navigation.navigate('RestaurantSignUpStep4', {
+      formData: { 
+        ...existingData, 
+        ...formData,
+      }
+    });
+  };
 
-    if (formData.ownerPassword !== formData.ownerConfirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (formData.ownerPassword.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.ownerEmail)) {
-      setError('Please enter a valid email address');
-      return;
-    }
-
-    // Navigate to step 2 with current data
+  const goBack = () => {
     navigation.navigate('RestaurantSignUpStep2', {
       formData: { ...existingData, ...formData }
     });
@@ -69,14 +53,14 @@ function RestaurantSignUpStep1({ navigation, route }) {
       >
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={goBack}
         >
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
 
         <View style={styles.logoContainer}>
           <Image
-            source={require('../assets/images/logo.png')}
+            source={require('../../../assets/images/logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -85,17 +69,18 @@ function RestaurantSignUpStep1({ navigation, route }) {
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={styles.progressStep} />
-            <View style={styles.progressStep} />
+            <View style={[styles.progressStep, styles.progressStepActive]} />
+            <View style={[styles.progressStep, styles.progressStepActive]} />
+            <View style={[styles.progressStep, styles.progressStepActive]} />
             <View style={styles.progressStep} />
           </View>
-          <Text style={styles.progressText}>Step 1 of 4</Text>
+          <Text style={styles.progressText}>Step 4 of 5</Text>
         </View>
 
         <View style={styles.formHeader}>
-          <Text style={styles.formTitle}>Account Information</Text>
+          <Text style={styles.formTitle}>Opening Hours</Text>
           <Text style={styles.formSubtitle}>
-            Let's start with your basic details
+            Set your working hours
           </Text>
         </View>
 
@@ -106,52 +91,46 @@ function RestaurantSignUpStep1({ navigation, route }) {
             </View>
           ) : null}
 
-          <Text style={styles.sectionTitle}>🔐 Owner Details</Text>
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Full name *"
-            placeholderTextColor="#999"
-            value={formData.ownerFullName}
-            onChangeText={(text) => updateFormData('ownerFullName', text)}
-          />
+          {/* Section Horaires */}
+          <Text style={styles.sectionTitle}>Opening Hours</Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Email address *"
+            placeholder="Ex: 09:00 - 22:00"
             placeholderTextColor="#999"
-            value={formData.ownerEmail}
-            onChangeText={(text) => updateFormData('ownerEmail', text)}
-            keyboardType="email-address"
-            autoCapitalize="none"
+            value={formData.openingHours}
+            onChangeText={(text) => updateFormData('openingHours', text)}
           />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Phone number *"
-            placeholderTextColor="#999"
-            value={formData.phoneNumber}
-            onChangeText={(text) => updateFormData('phoneNumber', text)}
-            keyboardType="phone-pad"
-          />
+          <Text style={styles.sectionTitle}>Pickup Window</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Password *"
-            placeholderTextColor="#999"
-            value={formData.ownerPassword}
-            onChangeText={(text) => updateFormData('ownerPassword', text)}
-            secureTextEntry
-          />
+          <View style={styles.rowInputs}>
+            <View style={styles.halfInputContainer}>
+              <Text style={styles.inputLabel}>Start Time *</Text>
+              <TextInput
+                style={[styles.input, styles.halfInput]}
+                placeholder="09:00"
+                placeholderTextColor="#999"
+                value={formData.pickupTimeStart}
+                onChangeText={(text) => updateFormData('pickupTimeStart', text)}
+              />
+            </View>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm password *"
-            placeholderTextColor="#999"
-            value={formData.ownerConfirmPassword}
-            onChangeText={(text) => updateFormData('ownerConfirmPassword', text)}
-            secureTextEntry
-          />
+            <View style={styles.halfInputContainer}>
+              <Text style={styles.inputLabel}>End Time *</Text>
+              <TextInput
+                style={[styles.input, styles.halfInput]}
+                placeholder="18:00"
+                placeholderTextColor="#999"
+                value={formData.pickupTimeEnd}
+                onChangeText={(text) => updateFormData('pickupTimeEnd', text)}
+              />
+            </View>
+          </View>
+
+          <Text style={styles.helperText}>
+            When can customers pick up their orders?
+          </Text>
 
           <TouchableOpacity
             style={styles.continueButton}
@@ -160,13 +139,6 @@ function RestaurantSignUpStep1({ navigation, route }) {
           >
             <Text style={styles.continueButtonText}>Continue →</Text>
           </TouchableOpacity>
-
-          <View style={styles.loginLinkContainer}>
-            <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.loginLink}>Sign In</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -189,7 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#5a2c1c',
     fontWeight: '600',
-    marginTop:15
+    marginTop: 15,
   },
   logoContainer: {
     alignItems: 'center',
@@ -240,7 +212,7 @@ const styles = StyleSheet.create({
   formContainer: {
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 15,
+    padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -252,6 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#5a2c1c',
     marginBottom: 15,
+    marginTop: 10,
   },
   errorContainer: {
     backgroundColor: '#ffebee',
@@ -266,6 +239,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
+  inputLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 5,
+    fontWeight: '500',
+  },
   input: {
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
@@ -274,6 +253,24 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+  },
+  rowInputs: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  halfInputContainer: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  halfInput: {
+    marginBottom: 0,
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#999',
+    marginBottom: 10,
+    marginTop: 5,
+    fontStyle: 'italic',
   },
   continueButton: {
     backgroundColor: '#5a2c1c',
@@ -292,20 +289,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  loginLinkContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  loginText: {
-    color: '#666',
-    fontSize: 14,
-  },
-  loginLink: {
-    color: '#5a2c1c',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
 });
 
-export default RestaurantSignUpStep1;
+export default RestaurantSignUpStep3;
