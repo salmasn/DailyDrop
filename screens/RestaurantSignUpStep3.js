@@ -15,8 +15,6 @@ function RestaurantSignUpStep3({ navigation, route }) {
   const existingData = route?.params?.formData || {};
   
   const [formData, setFormData] = useState({
-    latitude: existingData.latitude || '',
-    longitude: existingData.longitude || '',
     openingHours: existingData.openingHours || '',
     pickupTimeStart: existingData.pickupTimeStart || '',
     pickupTimeEnd: existingData.pickupTimeEnd || '',
@@ -30,23 +28,8 @@ function RestaurantSignUpStep3({ navigation, route }) {
   };
 
   const validateAndContinue = () => {
-    if (!formData.latitude || !formData.longitude || !formData.openingHours || 
-        !formData.pickupTimeStart || !formData.pickupTimeEnd) {
+    if (!formData.openingHours || !formData.pickupTimeStart || !formData.pickupTimeEnd) {
       setError('Please fill in all required fields');
-      return;
-    }
-
-    // Validate latitude and longitude
-    const lat = parseFloat(formData.latitude);
-    const lng = parseFloat(formData.longitude);
-    
-    if (isNaN(lat) || lat < -90 || lat > 90) {
-      setError('Invalid latitude (must be between -90 and 90)');
-      return;
-    }
-    
-    if (isNaN(lng) || lng < -180 || lng > 180) {
-      setError('Invalid longitude (must be between -180 and 180)');
       return;
     }
 
@@ -97,9 +80,9 @@ function RestaurantSignUpStep3({ navigation, route }) {
         </View>
 
         <View style={styles.formHeader}>
-          <Text style={styles.formTitle}>Location & Hours</Text>
+          <Text style={styles.formTitle}>Operating Hours</Text>
           <Text style={styles.formSubtitle}>
-            When and where can customers find you?
+            When can customers find you?
           </Text>
         </View>
 
@@ -110,36 +93,10 @@ function RestaurantSignUpStep3({ navigation, route }) {
             </View>
           ) : null}
 
-          <Text style={styles.sectionTitle}>📍 Location</Text>
-          
-          <View style={styles.rowInputs}>
-            <TextInput
-              style={[styles.input, styles.halfInput]}
-              placeholder="Latitude *"
-              placeholderTextColor="#999"
-              value={formData.latitude}
-              onChangeText={(text) => updateFormData('latitude', text)}
-              keyboardType="decimal-pad"
-            />
-
-            <TextInput
-              style={[styles.input, styles.halfInput]}
-              placeholder="Longitude *"
-              placeholderTextColor="#999"
-              value={formData.longitude}
-              onChangeText={(text) => updateFormData('longitude', text)}
-              keyboardType="decimal-pad"
-            />
-          </View>
-
-          <Text style={styles.helperText}>
-            💡 You can get coordinates from Google Maps
-          </Text>
-
           <Text style={styles.sectionTitle}>⏰ Operating Hours</Text>
 
           <TextInput
-            style={styles.inputOpeningHours}
+            style={styles.input}
             placeholder="Opening hours * (e.g., 09:00 - 22:00)"
             placeholderTextColor="#999"
             value={formData.openingHours}
@@ -199,7 +156,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#5a2c1c',
     fontWeight: '600',
-    marginTop:15
+    marginTop: 15
   },
   logoContainer: {
     alignItems: 'center',
@@ -288,14 +245,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
     padding: 15,
-    fontSize: 16,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  inputOpeningHours: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
     fontSize: 16,
     marginBottom: 15,
     borderWidth: 1,

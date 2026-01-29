@@ -11,47 +11,63 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { authService } from '../Api/auth';
-
+ 
+import { useAuth } from "../hooks/useAuth";
 
 function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSignUp = () =>
   {
     navigation.navigate('SignUpChoice');
   }
+ 
+    const { email, setEmail, password, setPassword, loading, handleLogin } =
+    useAuth();
 
-  const handleLogin = async () => {
-    console.log('Entrer a la fct');
-    // Validation
-    if (!email || !password) {
-      setError('Veuillez remplir tous les champs');
-      return;
-    }
-    setError('');
-    setLoading(true);
-
+  const handleSignIn = async () => {
     try {
-      // Appel API
-      const response = await authService.login(email, password);
-      console.log('Login successful:', response.user);
-
-      // Afficher un message de succès
-      Alert.alert(
-        'Connexion réussie ! 🎉',
-      );
+      await handleLogin();
     } catch (err) {
-      console.error(' Login error:', err);
-      setError(err.message);
-      Alert.alert('Erreur de connexion', err.message);
-    } finally {
-      setLoading(false);
+      Alert.alert("Erreur", "Identificatiants incorrects");
     }
   };
+ 
+
+
+
+
+  // const handleLogin = async () => {
+  //   console.log('Entrer a la fct');
+  //   // Validation
+  //   if (!email || !password) {
+  //     setError('Veuillez remplir tous les champs');
+  //     return;
+  //   }
+  //   setError('');
+  //   setLoading(true);
+
+  //   try {
+  //     // Appel API
+  //     const response = await authService.login(email, password);
+  //     console.log('Login successful:', response.user);
+
+  //     // Afficher un message de succès
+  //     Alert.alert(
+  //       'Connexion réussie ! 🎉',
+  //     );
+  //   } catch (err) {
+  //     console.error(' Login error:', err);
+  //     setError(err.message);
+  //     Alert.alert('Erreur de connexion', err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
 
   return (
     <KeyboardAvoidingView
@@ -107,7 +123,7 @@ function LoginScreen({ navigation }) {
 
         <TouchableOpacity
           style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-          onPress={handleLogin}
+          onPress={handleSignIn}
           activeOpacity={0.8}
           disabled={loading}
         >
