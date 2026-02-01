@@ -22,7 +22,7 @@ export const useAuth = () => {
       if (role === 'client') {
         navigation.replace('Recommendation'); // Page client
       } else if (role === 'restaurant_owner') {
-        navigation.replace('OwnerHomeScreen'); // Page owner
+        navigation.replace('OwnerHome'); // Page owner
       }
     }
   }, [isLoggedIn, role]);
