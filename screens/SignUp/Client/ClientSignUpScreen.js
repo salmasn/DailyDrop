@@ -12,7 +12,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import { authService } from '../../../Api/auth';
+import clientService from '../../../services/clientService'; // ✅ Import du service
 
 function ClientSignUpScreen({ navigation }) {
   const [formData, setFormData] = useState({
@@ -62,14 +62,13 @@ function ClientSignUpScreen({ navigation }) {
     setError('');
 
     try {
-      const userData = {
-        userType: 'client',
+      // ✅ Utilisation du clientService
+      const response = await clientService.register({
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
-      };
+      });
       
-      const response = await authService.register(userData);
       console.log('Registration successful:', response);
 
       Alert.alert(

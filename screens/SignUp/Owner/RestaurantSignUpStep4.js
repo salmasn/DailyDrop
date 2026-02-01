@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-// import { authService } from '../Api/auth'; // Commented for now
+import { restaurantOwnerService } from '../../../services/restaurantOwnerService'; // ✅ Import du service
 
 function RestaurantSignUpStep4({ navigation, route }) {
   const existingData = route?.params?.formData || {};
@@ -31,64 +31,45 @@ function RestaurantSignUpStep4({ navigation, route }) {
   };
 
   const handleSignUp = async () => {
-    // if (!formData.averagePriceRange) {
-    //   setError('Please enter the average price range');
-    //   return;
-    // }
+    setLoading(true);
+    setError('');
 
-    // setLoading(true);
-    // setError('');
-
-    // TODO: Uncomment when backend is ready
-    /*
+    
     try {
-      // Combine all data from previous steps
+      // Combiner toutes les données des étapes précédentes
       const completeData = { ...existingData, ...formData };
-      
-      const userData = {
-        userType: 'restaurant',
-        ownerFullName: completeData.ownerFullName,
-        email: completeData.ownerEmail,
-        password: completeData.ownerPassword,
-        phoneNumber: completeData.phoneNumber,
-        restaurantName: completeData.restaurantName,
-        restaurantAddress: completeData.restaurantAddress,
-        latitude: parseFloat(completeData.latitude),
-        longitude: parseFloat(completeData.longitude),
-        openingHours: completeData.openingHours,
-        pickupTimeWindow: `${completeData.pickupTimeStart} - ${completeData.pickupTimeEnd}`,
-        cuisineType: completeData.cuisineType,
-        averagePriceRange: completeData.averagePriceRange,
-        paymentMethods: completeData.paymentMethods,
-        restaurantDescription: completeData.restaurantDescription,
-      };
-      
-      const response = await authService.register(userData);
-      console.log('Registration successful:', response);
 
+      console.log('📝 Données complètes:', completeData);
+
+      // Appeler le service d'inscription
+      const response = await restaurantOwnerService.register(completeData);
+
+      console.log('🎉 Inscription réussie:', response);
+
+      setLoading(false);
+
+      // Afficher un message de succès
       Alert.alert(
-        'Registration Successful!',
-        'Your restaurant account has been created successfully!',
-        [{ text: 'OK', onPress: () => navigation.navigate('Recommendation') }]
+        'Inscription réussie !',
+        `Votre restaurant "${response.restaurant.name}" a été créé avec succès. Statut: ${response.restaurant.status}`,
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Recommendation') // ou 'Login'
+          }
+        ]
       );
+
     } catch (err) {
-      console.error('Registration error:', err);
-      setError(err.message || 'An error occurred during registration');
-      Alert.alert('Registration Error', err.message);
-    } finally {
+      console.error('❌ Erreur d\'inscription:', err);
+      setError(err.message || 'Une erreur est survenue');
       setLoading(false);
-    }
-    */
-
-    // Temporary: Navigate directly to Recommendation screen
-    setTimeout(() => {
-      setLoading(false);
+      
       Alert.alert(
-        'Registration Successful!',
-        'Your restaurant account has been created successfully!',
-        [{ text: 'OK', onPress: () => navigation.navigate('Recommendation') }]
+        'Erreur d\'inscription',
+        err.message || 'Une erreur est survenue lors de l\'inscription'
       );
-    }, 1000);
+    }
   };
 
   const goBack = () => {
