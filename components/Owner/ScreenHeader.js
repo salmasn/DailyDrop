@@ -1,22 +1,71 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-function ScreenHeader({ title, subtitle, rightAction, rightIcon }) {
+function ScreenHeader({ 
+  title, 
+  subtitle, 
+  rightAction, 
+  rightIcon,           // texte ou image source si tu veux changer
+  avatarSource= require('../../assets/images/avatar.png'),       // ← nouvelle prop : require('../assets/images/avatar.png') ou uri
+  showNotification = false,
+  onNotificationPress,
+  showSearch = false,
+  searchPlaceholder = "Rechercher...",
+  searchIconSource = require('../../assets/Icons/search.png'), // ← icône loupe depuis assets
+  backgroundColor = '#5a2c1c',
+}) {
   return (
-    <View style={styles.header}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{title}</Text>
-        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+    <View style={[styles.header, { backgroundColor }]}>
+      <View style={styles.headerContent}>
+        {/* Avatar (image) + Titre */}
+        <View style={styles.profileSection}>
+          {avatarSource && (
+            <Image 
+              source={avatarSource}
+              style={styles.avatar}
+              resizeMode="cover"
+            />
+          )}
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{title}</Text>
+            {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          </View>
+        </View>
+        
+        {/* Boutons à droite */}
+        <View style={styles.rightButtons}>
+          {rightAction && (
+            <TouchableOpacity 
+              style={styles.iconButton}
+              onPress={rightAction}
+              activeOpacity={0.7}
+            >
+              {typeof rightIcon === 'string' ? (
+                <Text style={styles.iconText}>{rightIcon}</Text>
+              ) : rightIcon ? (
+                <Image source={rightIcon} style={styles.rightIconImage} />
+              ) : null}
+            </TouchableOpacity>
+          )}
+
+          {/* Tu peux rajouter la notification ici plus tard si besoin */}
+          {/* {showNotification && (...)} */}
+        </View>
       </View>
-      
-      {rightAction && (
-        <TouchableOpacity 
-          style={styles.rightButton}
-          onPress={rightAction}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.rightIcon}>{rightIcon || '+'}</Text>
-        </TouchableOpacity>
+
+      {/* Barre de recherche optionnelle - sans filtre */}
+      {showSearch && (
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Image 
+              source={searchIconSource}
+              style={styles.searchIconImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.searchPlaceholder}>{searchPlaceholder}</Text>
+          </View>
+          {/* Le bouton filtre ⚙️ a été supprimé */}
+        </View>
       )}
     </View>
   );
@@ -24,45 +73,98 @@ function ScreenHeader({ title, subtitle, rightAction, rightIcon }) {
 
 const styles = StyleSheet.create({
   header: {
+    paddingTop: 35,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: '#5a2c1c',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    marginBottom: 20,
+  },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderColor:'#1e1001',
+    borderWidth:2,
+    marginRight: 12,
+    backgroundColor: 'white', // fallback si image ne charge pas
   },
   titleContainer: {
     flex: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   subtitle: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.9)',
   },
-  rightButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  rightButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 10,
   },
-  rightIcon: {
-    fontSize: 24,
+  iconText: {
+    fontSize: 22,
     color: 'white',
-    fontWeight: 'bold',
+  },
+  rightIconImage: {
+    width: 24,
+    height: 24,
+    tintColor: 'white', // optionnel
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 22,
+    backgroundColor: '#f7f7f7de',
+
+
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    // plus besoin de marginRight car filtre supprimé
+  },
+  searchIconImage: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+    tintColor: '#777', // ← tu peux changer la couleur
+  },
+  searchPlaceholder: {
+    fontSize: 14,
+    color: '#999',
+    flex: 1,
   },
 });
 
