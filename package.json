@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.4",
     "expo": "~54.0.25",
+    "expo-image-picker": "~17.0.10",
     "expo-location": "~19.0.8",
     "expo-secure-store": "~15.0.8",
     "expo-status-bar": "~3.0.8",
@@ -28,5 +29,9 @@
     "react-native-secure-storage": "^0.1.2",
     "react-redux": "^9.2.0"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  }
 }

@@ -21,7 +21,7 @@ function HomeScreen({ navigation })
         </Text>
         
         <Text style={styles.description}>
-          Discover DailyDrop, the anti-waste app that links you to restaurants offering end-of-day meals at discounted prices. Save money, and enjoy delicious food! 🍽️
+          Discover DailyDrop, the anti-waste app that links you to restaurants offering end-of-day meals at discounted prices. Save money, and enjoy delicious food! 
         </Text>
         
         <TouchableOpacity 

@@ -50,8 +50,7 @@ export const useAuth = () => {
         return;
       }
       
-      // Connexion réussie
-      alert("Connexion réussie !");
+    
       
     } catch (error) {
       alert(`Erreur : ${error.message}`);

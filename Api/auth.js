@@ -2,7 +2,7 @@
 import axios from 'axios';
 import storageService from '../services/storageService'; // 👈 Importe ton service
 
-const API_URL = 'http://192.168.1.14:3000'; // Remplace par l'URL de ton APIs
+const API_URL = 'http://192.168.1.123:3000'; // Remplace par l'URL de ton APIs
 
 const apiClient = axios.create({
   baseURL: API_URL,

@@ -1,51 +1,60 @@
 import axios from 'axios';
-
-const API_URL = 'http://192.168.1.14:3000';
+import { API_CONFIG } from '../Api/apiConfig';
+const API_URL = API_CONFIG.BASE_URL;
 
 export const restaurantOwnerService = {
-  /**
-   * Inscription d'un propriétaire de restaurant
-   * @param {Object} data - Données du formulaire
-   * @returns {Promise<Object>} - Réponse du serveur
-   */
   async register(data) {
     try {
-      const payload = {
-        // Owner information
-        ownerFullName: data.ownerFullName,
-        ownerEmail: data.ownerEmail,
-        ownerPassword: data.ownerPassword,
-        phoneNumber: data.phoneNumber,
+      // 1. On utilise FormData pour supporter l'envoi de fichiers
+      const formData = new FormData();
 
-        // Restaurant information
-        restaurantName: data.restaurantName,
-        restaurantDescription: data.restaurantDescription || null,
-        cuisineType: data.cuisineType,
+      // 2. Ajout des informations du propriétaire
+      formData.append('ownerFullName', data.ownerFullName);
+      formData.append('ownerEmail', data.ownerEmail);
+      formData.append('ownerPassword', data.ownerPassword);
+      formData.append('phoneNumber', data.phoneNumber);
+      formData.append('role', 'restaurant_owner'); // Valeur par défaut pour ton DTO
 
-        // Location
-        restaurantAddress: data.location?.address || null,
-        latitude: data.location?.latitude || null,
-        longitude: data.location?.longitude || null,
-        locationMethod: data.location?.method || null,
+      // 3. Ajout des informations du restaurant
+      formData.append('restaurantName', data.restaurantName);
+      formData.append('restaurantDescription', data.restaurantDescription || '');
+      formData.append('cuisineType', data.cuisineType);
 
-        // Hours & Pricing
-        openingHours: data.openingHours || null,
-        pickupTimeStart: data.pickupTimeStart || null,
-        pickupTimeEnd: data.pickupTimeEnd || null,
-        averagePriceRange: data.averagePriceRange || null,
-        paymentMethods: data.paymentMethods || null,
-      };
+      // 4. Localisation (Note : FormData ne supporte que les strings/blobs)
+      formData.append('restaurantAddress', data.location?.address || '');
+      formData.append('latitude', String(data.location?.latitude || ''));
+      formData.append('longitude', String(data.location?.longitude || ''));
+      formData.append('locationMethod', data.location?.method || 'gps');
 
-      console.log('📤 Envoi des données:', payload);
+      // 5. Horaires et Prix
+      formData.append('openingHours', data.openingHours || '');
+      formData.append('pickupTimeStart', data.pickupTimeStart || '');
+      formData.append('pickupTimeEnd', data.pickupTimeEnd || '');
+      formData.append('averagePriceRange', data.averagePriceRange || '');
+      formData.append('paymentMethods', data.paymentMethods || '');
+
+      // 6. GESTION DE L'IMAGE
+      // On récupère 'restaurantImage' qui vient de ton Step 2
+      if (data.restaurantImage && data.restaurantImage.uri) {
+        formData.append('image', {
+          uri: data.restaurantImage.uri,
+          type: 'image/jpeg', // Ou data.restaurantImage.type
+          name: 'restaurant_cover.jpg', // Ou data.restaurantImage.name
+        });
+      }
+
+      console.log('📤 Envoi du FormData au serveur...');
 
       const response = await axios.post(
         `${API_URL}/restaurant-owners/register`,
-        payload,
+        formData,
         {
           headers: {
-            'Content-Type': 'application/json',
+            // Indispensable pour que le backend reconnaisse le fichier
+            'Content-Type': 'multipart/form-data',
           },
-          timeout: 10000, // 10 secondes
+          // Nécessaire sur certaines versions de React Native/Axios
+          transformRequest: (data) => data, 
         }
       );
 
@@ -54,18 +63,8 @@ export const restaurantOwnerService = {
 
     } catch (error) {
       console.error('❌ Erreur lors de l\'inscription:', error);
-
-      if (error.response) {
-        // Erreur retournée par le serveur
-        const message = error.response.data?.message || 'Erreur lors de l\'inscription';
-        throw new Error(message);
-      } else if (error.request) {
-        // Pas de réponse du serveur
-        throw new Error('Impossible de contacter le serveur. Vérifiez votre connexion.');
-      } else {
-        // Autre erreur
-        throw new Error(error.message || 'Une erreur est survenue');
-      }
+      const message = error.response?.data?.message || error.message || 'Erreur inconnue';
+      throw new Error(message);
     }
   },
 };
