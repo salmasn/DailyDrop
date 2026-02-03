@@ -55,7 +55,7 @@ function RestaurantSignUpStep4({ navigation, route }) {
         [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('Recommendation') // ou 'Login'
+            onPress: () => navigation.navigate('OwnerHome') 
           }
         ]
       );

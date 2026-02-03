@@ -12,7 +12,7 @@ import {
   Alert, // Ajouté pour les erreurs
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker'; // 1. Import de l'outil
-
+import { Ionicons } from '@expo/vector-icons';
 function RestaurantSignUpStep2({ navigation, route }) {
   const existingData = route?.params?.formData || {};
   
@@ -128,7 +128,7 @@ function RestaurantSignUpStep2({ navigation, route }) {
               </View>
             ) : (
               <View style={styles.imagePlaceholder}>
-                <Text style={styles.imagePlaceholderIcon}>📸</Text>
+                  <Ionicons name="cloud-upload-outline" size={42} color="#999" />
                 <Text style={styles.imagePlaceholderText}>Upload Restaurant Photo</Text>
               </View>
             )}

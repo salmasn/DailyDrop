@@ -1,27 +1,37 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useSelector } from 'react-redux'; // Ajouté
+import { useRestaurantImage } from '../../hooks/Userestaurantimage'; // Ajouté
 
 function ScreenHeader({ 
   title, 
   subtitle, 
   rightAction, 
-  rightIcon,           // texte ou image source si tu veux changer
-  avatarSource= require('../../assets/images/avatar.png'),       // ← nouvelle prop : require('../assets/images/avatar.png') ou uri
+  rightIcon,
+  // Modification ici : on utilise l'image dynamique du hook par défaut
+  avatarSource,      
   showNotification = false,
   onNotificationPress,
   showSearch = false,
   searchPlaceholder = "Rechercher...",
-  searchIconSource = require('../../assets/Icons/search.png'), // ← icône loupe depuis assets
+  searchIconSource = require('../../assets/Icons/search.png'), 
   backgroundColor = '#5a2c1c',
 }) {
+  // --- Logique dynamique ajoutée ---
+  const { restaurantImage } = useRestaurantImage();
+  const fallbackImage = require('../../assets/images/avatar.png');
+  // Si avatarSource n'est pas passé en prop, on utilise l'image de la DB, sinon le fallback
+  const finalAvatar = avatarSource || (restaurantImage ? restaurantImage : fallbackImage);
+  // ---------------------------------
+
   return (
     <View style={[styles.header, { backgroundColor }]}>
       <View style={styles.headerContent}>
         {/* Avatar (image) + Titre */}
         <View style={styles.profileSection}>
-          {avatarSource && (
+          {finalAvatar && (
             <Image 
-              source={avatarSource}
+              source={finalAvatar}
               style={styles.avatar}
               resizeMode="cover"
             />
@@ -47,13 +57,10 @@ function ScreenHeader({
               ) : null}
             </TouchableOpacity>
           )}
-
-          {/* Tu peux rajouter la notification ici plus tard si besoin */}
-          {/* {showNotification && (...)} */}
         </View>
       </View>
 
-      {/* Barre de recherche optionnelle - sans filtre */}
+      {/* Barre de recherche optionnelle */}
       {showSearch && (
         <View style={styles.searchContainer}>
           <View style={styles.searchBar}>
@@ -64,7 +71,6 @@ function ScreenHeader({
             />
             <Text style={styles.searchPlaceholder}>{searchPlaceholder}</Text>
           </View>
-          {/* Le bouton filtre ⚙️ a été supprimé */}
         </View>
       )}
     </View>
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
     borderColor:'#1e1001',
     borderWidth:2,
     marginRight: 12,
-    backgroundColor: 'white', // fallback si image ne charge pas
+    backgroundColor: 'white',
   },
   titleContainer: {
     flex: 1,
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
   rightIconImage: {
     width: 24,
     height: 24,
-    tintColor: 'white', // optionnel
+    tintColor: 'white',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -149,17 +155,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 22,
     backgroundColor: '#f7f7f7de',
-
-
     paddingHorizontal: 15,
     paddingVertical: 12,
-    // plus besoin de marginRight car filtre supprimé
   },
   searchIconImage: {
     width: 20,
     height: 20,
     marginRight: 10,
-    tintColor: '#777', // ← tu peux changer la couleur
+    tintColor: '#777',
   },
   searchPlaceholder: {
     fontSize: 14,

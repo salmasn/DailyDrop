@@ -88,7 +88,6 @@ function MenuScreen({ navigation }) {
       <ScreenHeader
         title="Bonjour, Chef!"
         subtitle="Gérez vos plats délicieux"
-        // avatar="👨‍🍳"           ← commentaire : à remplacer par image si tu as suivi la modif précédente
         showNotification={true}
         onNotificationPress={() => navigation.navigate('Notifications')}
         showSearch={true}
