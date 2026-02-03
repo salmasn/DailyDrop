@@ -1,8 +1,9 @@
 // api/client.js
 import axios from 'axios';
-import storageService from '../services/storageService'; // 👈 Importe ton service
+import storageService from '../services/storageService'; 
 
-const API_URL = 'http://192.168.1.123:3000'; // Remplace par l'URL de ton APIs
+import { API_CONFIG } from './apiConfig';
+const API_URL = API_CONFIG.BASE_URL;
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -16,7 +17,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     try {
-      const token = await storageService.getToken(); // 👈 Utilise ton service
+      const token = await storageService.getToken(); 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

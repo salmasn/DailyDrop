@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// Configuration de base
-const API_URL = 'http://192.168.1.14:3000'; // Remplacez par votre IP
+
+import { API_CONFIG } from '../Api/apiConfig';
+const API_URL = API_CONFIG.BASE_URL;
+
 
 const clientService = {
   /**
