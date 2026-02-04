@@ -45,7 +45,7 @@ function OwnerTabNavigator() {
           tabBarIcon: ({ focused }) => (
             <TabIcon 
               icon={require('../assets/Icons/menu.png')} 
-              label="Menu" 
+              // label="Menu" 
               focused={focused} 
             />
           ),
@@ -59,7 +59,7 @@ function OwnerTabNavigator() {
           tabBarIcon: ({ focused }) => (
             <TabIcon 
               icon={require('../assets/Icons/calendar.png')} 
-              label="Calendar" 
+              // label="Calendar" 
               focused={focused} 
             />
           ),
@@ -72,7 +72,7 @@ function OwnerTabNavigator() {
           tabBarIcon: ({ focused }) => (
             <TabIcon 
               icon={require('../assets/Icons/settings.png')} 
-              label="Settings" 
+              // label="Settings" 
               focused={focused} 
             />
           ),
@@ -86,7 +86,7 @@ function OwnerTabNavigator() {
           tabBarIcon: ({ focused }) => (
             <TabIcon 
               icon={require('../assets/Icons/profile.png')} 
-              label="Profile" 
+              // label="Profile" 
               focused={focused} 
             />
           ),
@@ -100,7 +100,7 @@ function OwnerTabNavigator() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: 60,
+    height: 55,
     paddingTop: 10,
     backgroundColor: 'white',
     borderTopWidth: 1,
@@ -119,22 +119,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconImage: {
-    width: 26,      // Légèrement plus grand
-    height: 26,
+    width: 25,      // Légèrement plus grand
+    height: 25,
     marginBottom: 3,
   },
   iconImageActive: {
-    transform: [{ scale: 1.15 }], // Animation plus visible
+    transform: [{ scale: 1.30 }], // Animation plus visible
   },
-  label: {
-    fontSize: 7,
-    color: '#999',
-    fontWeight: '500',
-  },
-  labelActive: {
-    color: '#5a2c1c',
-    fontWeight: 'bold',
-  },
+  // // label: {
+  // //   fontSize: 7,
+  // //   color: '#999',
+  // //   fontWeight: '500',
+  // // },
+  // labelActive: {
+  //   color: '#5a2c1c',
+  //   fontWeight: 'bold',
+  // },
 });
 
 export default OwnerTabNavigator;

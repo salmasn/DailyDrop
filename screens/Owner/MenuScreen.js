@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,81 +7,183 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
 } from 'react-native';
 import ScreenHeader from '../../components/Owner/ScreenHeader';
 
+// Importation des services
+import storageService from '../../services/storageService';
+import restaurantService from '../../services/restaurantService';
+import { categoryService } from '../../services/categoryService';
+
+// Fonction pour décoder le JWT
+const decodeJWT = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('❌ Erreur lors du décodage du token:', error);
+    return null;
+  }
+};
+
 function MenuScreen({ navigation }) {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedMeal, setSelectedMeal] = useState('All');
+  const [restaurantId, setRestaurantId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  
+  // États pour les données du restaurant
+  const [categories, setCategories] = useState([]);
+  const [uniqueMeals, setUniqueMeals] = useState([]);
 
-  const categories = [
-    { id: '1', name: 'All' },
-    { id: '2', name: 'Breakfast' },
-    { id: '3', name: 'Lunch' },
-    { id: '4', name: 'Dinner' },
-    { id: '5', name: 'Dessert' },
-  ];
+  // Récupération automatique du restaurant_id et des données au montage du composant
+  useEffect(() => {
+    fetchRestaurantData();
+  }, []);
 
-  const dishes = [
-    {
-      id: '1',
-      name: 'Burst Tomato Pasta',
-      image: require('../../assets/images/pasta.png'),
-      time: '35 min',
-      difficulty: 'Easy',
-      chef: 'Arlene McCoy',
-      category: 'Lunch',
-      price: '45 MAD',
-    },
-    {
-      id: '2',
-      name: 'Margherita Pizza',
-      image: require('../../assets/images/pizza.png'),
-      time: '25 min',
-      difficulty: 'Medium',
-      chef: 'Gordon Chef',
-      category: 'Dinner',
-      price: '50 MAD',
-    },
-    {
-      id: '3',
-      name: 'Pancake Stack',
-      image: require('../../assets/images/pancake.png'),
-      time: '15 min',
-      difficulty: 'Easy',
-      chef: 'Jamie Oliver',
-      category: 'Breakfast',
-      price: '30 MAD',
-    },
-    {
-      id: '4',
-      name: 'Caesar Salad',
-      image: require('../../assets/images/cesar.png'),
-      time: '10 min',
-      difficulty: 'Easy',
-      chef: 'Mary Kitchen',
-      category: 'Lunch',
-      price: '35 MAD',
-    },
-    {
-      id: '5',
-      name: 'Chocolate Cake',
-      image: require('../../assets/images/chocoCake.png'),
-      time: '45 min',
-      difficulty: 'Hard',
-      chef: 'Sweet Baker',
-      category: 'Dessert',
-      price: '40 MAD',
-    },
-  ];
+  const fetchRestaurantData = async () => {
+    console.log("🚀 === DÉBUT FETCHRESTAURANTDATA ===");
+    try {
+      setLoading(true);
+      
+      // 1. Récupérer le token JWT
+      const token = await storageService.getToken();
+      if (!token) {
+        Alert.alert("Erreur", "Session expirée. Veuillez vous reconnecter.");
+        setLoading(false);
+        return;
+      }
 
-  const handleAddDish = () => {
-    console.log('Add new dish');
-    navigation.navigate('AddDish');
+      // 2. Décoder le token pour obtenir le user_id
+      const decodedToken = decodeJWT(token);
+      const userId = decodedToken?.id || decodedToken?.userId || decodedToken?.sub || decodedToken?.user_id;
+      
+      if (!userId) {
+        Alert.alert("Erreur", "Token invalide. Veuillez vous reconnecter.");
+        setLoading(false);
+        return;
+      }
+
+      // 3. Récupérer le restaurant de l'utilisateur
+      const restaurants = await restaurantService.findByUserId(userId);
+      
+      if (restaurants && restaurants.length > 0) {
+        const firstRestaurant = restaurants[0];
+        setRestaurantId(firstRestaurant.id);
+        console.log("✅ Restaurant ID:", firstRestaurant.id);
+
+        // 4. Charger les catégories du restaurant
+        await loadCategories(firstRestaurant.id);
+      } else {
+        Alert.alert("Information", "Aucun restaurant associé à votre compte.");
+      }
+    } catch (error) {
+      console.error('❌ Erreur dans fetchRestaurantData:', error);
+      Alert.alert("Erreur", "Impossible de charger les informations du restaurant.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filteredDishes = selectedCategory === 'All' 
-    ? dishes 
-    : dishes.filter(dish => dish.category === selectedCategory);
+  const loadCategories = async (restId) => {
+    try {
+      console.log("📱 Chargement des catégories pour restaurant:", restId);
+      const categoriesData = await categoryService.getCategoriesByRestaurant(restId);
+      console.log("✅ Catégories chargées:", categoriesData);
+      
+      setCategories(categoriesData);
+
+      // Extraire les meals uniques des catégories
+      const mealsMap = new Map();
+      categoriesData.forEach(category => {
+        if (category.meal && !mealsMap.has(category.meal.id)) {
+          mealsMap.set(category.meal.id, {
+            id: category.meal.id,
+            name: category.meal.name,
+          });
+        }
+      });
+      
+      const uniqueMealsArray = Array.from(mealsMap.values());
+      console.log("✅ Meals uniques extraits:", uniqueMealsArray);
+      setUniqueMeals(uniqueMealsArray);
+      
+    } catch (error) {
+      console.error('❌ Erreur chargement catégories:', error);
+      Alert.alert('Erreur', 'Impossible de charger les catégories.');
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    if (restaurantId) {
+      await loadCategories(restaurantId);
+    }
+    setRefreshing(false);
+  };
+
+  const handleAddDish = () => {
+    if (!restaurantId) {
+      Alert.alert(
+        "Action impossible", 
+        "L'ID du restaurant n'a pas été trouvé. Veuillez patienter ou redémarrer l'application."
+      );
+      return;
+    }
+    navigation.navigate('AddCategoryScreen', { restaurantId: restaurantId });
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    Alert.alert(
+      'Supprimer la catégorie',
+      'Êtes-vous sûr de vouloir supprimer cette catégorie ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await categoryService.deleteCategory(categoryId);
+              Alert.alert('Succès', 'Catégorie supprimée avec succès');
+              if (restaurantId) {
+                await loadCategories(restaurantId);
+              }
+            } catch (error) {
+              console.error('❌ Erreur suppression:', error);
+              Alert.alert('Erreur', 'Impossible de supprimer la catégorie');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  // Filtrer les catégories par meal sélectionné
+  const filteredCategories = selectedMeal === 'All' 
+    ? categories 
+    : categories.filter(cat => cat.meal?.name === selectedMeal);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color="#5a2c1c" />
+          <Text style={{ marginTop: 10, color: '#5a2c1c' }}>Chargement...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -98,12 +200,19 @@ function MenuScreen({ navigation }) {
       <ScrollView 
         style={styles.content}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#5a2c1c"
+          />
+        }
       >
-        {/* Categories Section */}
+        {/* Meals Section */}
         <View style={styles.categoriesSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Catégories</Text>
-            <TouchableOpacity>
+            <Text style={styles.sectionTitle}>Meals</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('MealsCategories')}>
               <Text style={styles.seeAll}>Voir tout</Text>
             </TouchableOpacity>
           </View>
@@ -113,20 +222,37 @@ function MenuScreen({ navigation }) {
             showsHorizontalScrollIndicator={false}
             style={styles.categoriesScroll}
           >
-            {categories.map((category) => (
+            {/* Bouton "All" */}
+            <TouchableOpacity
+              style={[
+                styles.categoryCard,
+                selectedMeal === 'All' && styles.categoryCardActive
+              ]}
+              onPress={() => setSelectedMeal('All')}
+            >
+              <Text style={[
+                styles.categoryName,
+                selectedMeal === 'All' && styles.categoryNameActive
+              ]}>
+                Tous
+              </Text>
+            </TouchableOpacity>
+
+            {/* Meals uniques du restaurant */}
+            {uniqueMeals.map((meal) => (
               <TouchableOpacity
-                key={category.id}
+                key={meal.id}
                 style={[
                   styles.categoryCard,
-                  selectedCategory === category.name && styles.categoryCardActive
+                  selectedMeal === meal.name && styles.categoryCardActive
                 ]}
-                onPress={() => setSelectedCategory(category.name)}
+                onPress={() => setSelectedMeal(meal.name)}
               >
                 <Text style={[
                   styles.categoryName,
-                  selectedCategory === category.name && styles.categoryNameActive
+                  selectedMeal === meal.name && styles.categoryNameActive
                 ]}>
-                  {category.name}
+                  {meal.name}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -136,8 +262,8 @@ function MenuScreen({ navigation }) {
         {/* Header avec bouton Ajouter */}
         <View style={styles.dishesHeader}>
           <View style={styles.dishesHeaderLeft}>
-            <Text style={styles.dishesTitle}>My Plats</Text>
-            <Text style={styles.dishesCount}>{filteredDishes.length} plat(s)</Text>
+            <Text style={styles.dishesTitle}>Mes Catégories</Text>
+            <Text style={styles.dishesCount}>{filteredCategories.length} catégorie(s)</Text>
           </View>
           
           <TouchableOpacity 
@@ -153,53 +279,115 @@ function MenuScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Dishes List */}
+        {/* Categories Grid - Design inspiré de l'image */}
         <View style={styles.recipesSection}>
-          {filteredDishes.map((dish) => (
-            <TouchableOpacity 
-              key={dish.id}
-              style={styles.dishCard}
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('DishDetails', { dishId: dish.id })}
-            >
-              {/* Image du plat */}
-              <View style={styles.dishImageContainer}>
-                <Image
-                  source={dish.image}
-                  style={styles.dishImage}
-                  resizeMode="cover"
-                />
-                <View style={styles.statusBadge}>
-                  <View style={styles.statusDot} />
-                  <Text style={styles.statusText}>Disponible</Text>
-                </View>
-              </View>
+          {filteredCategories.length > 0 ? (
+            filteredCategories.map((category, index) => {
+              // Couleurs différentes pour chaque meal
+              const mealColors = [
+                '#FF6B6B', // Rouge corail
+                '#4ECDC4', // Turquoise
+                '#FFD93D', // Jaune
+                '#95E1D3', // Vert menthe
+                '#F38181', // Rose saumon
+                '#AA96DA', // Violet
+                '#FCBAD3', // Rose
+                '#A8D8EA', // Bleu ciel
+              ];
+              const mealColor = mealColors[index % mealColors.length];
 
-              {/* Infos + boutons → semi-transparent + bordure haute arrondie */}
-              <View style={styles.dishDetails}>
-                <View style={styles.dishHeader}>
-                  <Text style={styles.dishName}>{dish.name}</Text>
-                  <Text style={styles.dishPrice}>{dish.price}</Text>
-                </View>
+              return (
+                <TouchableOpacity 
+                  key={category.id}
+                  style={styles.categoryCompactCard}
+                  activeOpacity={0.9}
+                  onPress={() => navigation.navigate('CategoryDetails', { categoryId: category.id })}
+                >
+                  {/* Image de fond */}
+                  {category.imageUrl ? (
+                    <Image
+                      source={{ uri: category.imageUrl }}
+                      style={styles.categoryFullImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View style={styles.categoryFullImagePlaceholder}>
+                      <Text style={styles.categoryFullImagePlaceholderText}>
+                        {category.name.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
 
-                <View style={styles.dishFooter}>
-                  <TouchableOpacity 
-                    style={styles.editButton}
-                    onPress={() => navigation.navigate('EditDish', { dishId: dish.id })}
-                  >
-                    <Text style={styles.editButtonText}>Modifier</Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity 
-                    style={styles.deleteButton}
-                    onPress={() => console.log('Delete', dish.id)}
-                  >
-                    <Text style={styles.deleteButtonText}>Supprimer</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
+                  {/* Overlay gradient léger */}
+                  <View style={styles.categoryOverlayGradient} />
+
+                  {/* Contenu */}
+                  <View style={styles.categoryOverlayContent}>
+                    {/* Header: Badge meal + Actions */}
+                    <View style={styles.categoryCompactHeader}>
+                      <View style={[styles.mealBadgeCompact, { backgroundColor: mealColor }]}>
+                        <Text style={styles.mealBadgeCompactText}>
+                          {category.meal?.name || 'N/A'}
+                        </Text>
+                      </View>
+
+                      {/* Icônes d'actions avec images personnalisées */}
+                      <View style={styles.categoryCompactActions}>
+                        <TouchableOpacity 
+                          style={styles.editIconButton}
+                          onPress={(e) => {
+                            e.stopPropagation();
+                            navigation.navigate('EditCategory', { categoryId: category.id });
+                          }}
+                        >
+                          <Image
+                            source={require('../../assets/Icons/pen.png')}
+                            style={styles.editIcon}
+                            resizeMode="contain"
+                          />
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity 
+                          style={styles.deleteIconButton}
+                          onPress={(e) => {
+                            e.stopPropagation();
+                            handleDeleteCategory(category.id);
+                          }}
+                        >
+                          <Image
+                            source={require('../../assets/Icons/delete.png')}
+                            style={styles.deleteIcon}
+                            resizeMode="contain"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
+                    {/* Footer: Badge nom collé en bas avec coins arrondis - Taille auto */}
+                    <View style={styles.categoryCompactFooter}>
+                      <Text style={styles.categoryCompactName} numberOfLines={1}>
+                        {category.name}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateText}>
+                {selectedMeal === 'All' 
+                  ? 'Aucune catégorie trouvée' 
+                  : `Aucune catégorie pour "${selectedMeal}"`}
+              </Text>
+              <TouchableOpacity 
+                style={styles.emptyStateButton}
+                onPress={handleAddDish}
+              >
+                <Text style={styles.emptyStateButtonText}>Ajouter une catégorie</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <View style={styles.bottomSpace} />
@@ -308,116 +496,142 @@ const styles = StyleSheet.create({
     height: 24,
     tintColor: 'white',
   },
+  
+  // ===== NOUVEAUX STYLES COMPACT CARDS =====
   recipesSection: {
     paddingTop: 5,
     paddingBottom: 20,
   },
-  dishCard: {
-    backgroundColor: 'white',
+  categoryCompactCard: {
+    height: 120,
     borderRadius: 20,
     marginHorizontal: 20,
-    marginBottom: 20,
-    overflow: 'hidden',
+    marginBottom: 16,
+    overflow: 'visible',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 5,
   },
-  dishImageContainer: {
-    position: 'relative',
-    height: 180,
-    backgroundColor: '#f0f0f0',
-  },
-  dishImage: {
+  categoryFullImage: {
+    position: 'absolute',
     width: '100%',
     height: '100%',
-  },
-  statusBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#4caf50',
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#333',
-  },
-  dishDetails: {
-    padding: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)', // semi-transparent white
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#e8e8e8',
-  },
-  dishHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  dishName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    flex: 1,
-    marginRight: 12,
-  },
-  dishPrice: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#5a2c1c',
-  },
-  dishFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  editButton: {
-    flex: 1,
+  categoryFullImagePlaceholder: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
     backgroundColor: '#5a2c1c',
-    paddingVertical: 12,
-    borderRadius: 12,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 20,
   },
-  editButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
+  categoryFullImagePlaceholderText: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: 'rgba(255, 255, 255, 0.25)',
+  },
+  categoryOverlayGradient: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 20,
+  },
+  categoryOverlayContent: {
+    flex: 1,
+    padding: 0,
+    justifyContent: 'space-between',
+  },
+  categoryCompactHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+  },
+  mealBadgeCompact: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 16,
+  },
+  mealBadgeCompactText: {
+    fontSize: 11,
+    fontWeight: '700',
     color: 'white',
   },
-  deleteButton: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    paddingVertical: 12,
-    borderRadius: 12,
-    
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#d0d0d0',
+  categoryCompactActions: {
+    flexDirection: 'row',
+    gap: 6,
   },
-  deleteButtonText: {
+  editIconButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.84)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteIconButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(40, 37, 37, 0.64)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // Icônes personnalisées
+  editIcon: {
+    width: 16,
+    height: 16,
+    tintColor: '#5a2c1c',
+  },
+  deleteIcon: {
+    width: 16,
+    height: 16,
+    tintColor: 'white',
+  },
+  // Footer avec taille auto pour le badge du nom
+  categoryCompactFooter: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    alignSelf: 'flex-start',
+  },
+  categoryCompactName: {
     fontSize: 14,
+    fontWeight: '700',
+    color: '#333',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 16,
+  },
+  
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 40,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#999',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  emptyStateButton: {
+    backgroundColor: '#5a2c1c',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 25,
+  },
+  emptyStateButtonText: {
+    color: 'white',
+    fontSize: 15,
     fontWeight: '600',
-    color: '#555',
   },
   bottomSpace: {
     height: 40,

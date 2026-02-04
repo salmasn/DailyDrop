@@ -15,7 +15,6 @@ import RestaurantSignUpStep4 from './screens/SignUp/Owner/RestaurantSignUpStep4'
 import RestaurantLocationChoice from './screens/SignUp/Owner/Restaurantlocationchoice';
 import RestaurantGPSLocation from './screens/SignUp/Owner/Restaurantgpslocation';
 import RestaurantMapSelection from './screens/SignUp/Owner/Restaurantmapselection';
-//import OwnerHomeScreen from './screens/Owner/OwnerHomeScreen';
 
 import RecommendationScreen from './screens/Client/RecommendationScreen';
 import TrackRestaurantsScreen from './screens/Client/TrackRestaurantsScreen';
@@ -23,6 +22,10 @@ import TrackRestaurantsScreen from './screens/Client/TrackRestaurantsScreen';
 import OwnerTabNavigator from './navigation/OwnerTabNavigator';
 import ClientTabNavigator from './navigation/ClientTabNavigator';
 
+
+//import OwnerHomeScreen from './screens/Owner/OwnerHomeScreen';
+import MealsCategories from './screens/Owner/MealsCategories';
+import AddCategoryScreen from './screens/Owner/Addcategoryscreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -47,6 +50,8 @@ export default function App() {
           <Stack.Screen name="RestaurantLocationChoice" component={RestaurantLocationChoice} />
           <Stack.Screen name="RestaurantGPSLocation" component={RestaurantGPSLocation} />
           <Stack.Screen name="RestaurantMapSelection" component={RestaurantMapSelection} />
+          <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
+          <Stack.Screen name="MealsCategories" component={MealsCategories} />
           <Stack.Screen name="OwnerHome"  component={OwnerTabNavigator}  options={{ headerShown: false }}/>
           <Stack.Screen name="ClientHome"  component={ClientTabNavigator}  options={{ headerShown: false }}/>
         </Stack.Navigator>
