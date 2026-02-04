@@ -1,0 +1,398 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "owner_id": 1,
+      "name": "Rick's Café",
+      "description": "Restaurant bar inspiré du film Casablanca, ambiance années 40",
+      "cuisine_type": "International",
+      "address": "248 Boulevard Sour Jdid, Ancienne Médina, Casablanca",
+      "location": {
+        "latitude": 33.605131,
+        "longitude": -7.620277
+      },
+      "location_method": "map",
+      "opening_hours": "12:00-15:00, 18:30-01:00",
+      "pickup_time_start": "12:30",
+      "pickup_time_end": "22:00",
+      "average_price_range": "180-350 DH",
+      "payment_methods": "card,cash",
+      "status": "active",
+      "image_url": "https://example.com/ricks.jpg",
+      "offers": [
+        {
+          "id": 1,
+          "dish_name": "Fish & Chips Classique",
+          "description": "Poisson pané croustillant, frites maison, sauce tartare",
+          "normal_price": 145,
+          "discounted_price": 95,
+          "discount_percentage": 34,
+          "category": "Plat principal",
+          "timeslots": [
+            {
+              "day": "Mercredi",
+              "start_time": "12:00",
+              "end_time": "15:00"
+            }
+          ],
+          "available_quantity": 15,
+          "image_url": "https://example.com/fish.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "owner_id": 2,
+      "name": "La Sqala",
+      "description": "Restaurant marocain traditionnel dans un bastion historique du XVIIe siècle",
+      "cuisine_type": "Marocain",
+      "address": "Boulevard des Almohades, Ancienne Médina, Casablanca",
+      "location": {
+        "latitude": 33.602986,
+        "longitude": -7.619017
+      },
+      "location_method": "map",
+      "opening_hours": "08:00-20:00",
+      "pickup_time_start": "08:30",
+      "pickup_time_end": "19:30",
+      "average_price_range": "100-200 DH",
+      "payment_methods": "cash,card",
+      "status": "active",
+      "image_url": "https://example.com/la-sqala.jpg",
+      "offers": [
+        {
+          "id": 2,
+          "dish_name": "Couscous Royal",
+          "description": "Couscous aux sept légumes avec viande d'agneau et poulet",
+          "normal_price": 95,
+          "discounted_price": 60,
+          "discount_percentage": 37,
+          "category": "Plat principal",
+          "timeslots": [
+            {
+              "day": "Vendredi",
+              "start_time": "12:00",
+              "end_time": "15:00"
+            }
+          ],
+          "available_quantity": 30,
+          "image_url": "https://example.com/couscous.jpg"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "owner_id": 3,
+      "name": "Villa Zevaco",
+      "description": "Restaurant design dans une villa Art Déco historique",
+      "cuisine_type": "Méditerranéen",
+      "address": "Boulevard d'Anfa, Casablanca",
+      "location": {
+        "latitude": 33.58803752015618,
+        "longitude": -7.645131054867859
+      },
+      "location_method": "map",
+      "opening_hours": "12:00-23:00",
+      "pickup_time_start": "12:30",
+      "pickup_time_end": "22:00",
+      "average_price_range": "180-350 DH",
+      "payment_methods": "card,cash",
+      "status": "active",
+      "image_url": "https://example.com/zevaco.jpg",
+      "offers": []
+    },
+    {
+      "id": 4,
+      "owner_id": 4,
+      "name": "McDonald's Corniche",
+      "description": "Fast food américain sur la Corniche d'Ain Diab",
+      "cuisine_type": "Fast Food",
+      "address": "Boulevard de la Corniche, Ain Diab, Casablanca",
+      "location": {
+        "latitude": 33.60120170129817,
+        "longitude": -7.661643931890549
+      },
+      "location_method": "gps",
+      "opening_hours": "08:00-00:00",
+      "pickup_time_start": "08:30",
+      "pickup_time_end": "23:30",
+      "average_price_range": "35-90 DH",
+      "payment_methods": "cash,card",
+      "status": "active",
+      "image_url": "https://example.com/mcdo-corniche.jpg",
+      "offers": [
+        {
+          "id": 4,
+          "dish_name": "Big Mac Menu",
+          "description": "Big Mac + frites moyennes + boisson",
+          "normal_price": 58,
+          "discounted_price": 58,
+          "discount_percentage": 34,
+          "category": "Menu",
+          "timeslots": [
+            {
+              "day": "Mardi-Jeudi",
+              "start_time": "14:00",
+              "end_time": "17:00"
+            }
+          ],
+          "available_quantity": 60,
+          "image_url": "https://example.com/bigmac.jpg"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "owner_id": 5,
+      "name": "Le Cabestan",
+      "description": "Restaurant panoramique sur l'océan Atlantique avec vue spectaculaire",
+      "cuisine_type": "Fruits de mer/International",
+      "address": "Boulevard de la Corniche, Ain Diab, Casablanca",
+      "location": {
+        "latitude": 33.60820535343222,
+        "longitude": -7.655512536290248
+      },
+      "location_method": "gps",
+      "opening_hours": "12:00-00:00",
+      "pickup_time_start": "12:30",
+      "pickup_time_end": "23:00",
+      "average_price_range": "200-450 DH",
+      "payment_methods": "card,cash",
+      "status": "active",
+      "image_url": "https://example.com/cabestan.jpg",
+      "offers": []
+    },
+    {
+      "id": 6,
+      "owner_id": 6,
+      "name": "La Bodega",
+      "description": "Tapas espagnoles et ambiance andalouse authentique",
+      "cuisine_type": "Espagnol",
+      "address": "129-131 Rue Allal Ben Abdellah, Casablanca",
+      "location": {
+        "latitude": 33.5953345143493,
+        "longitude": -7.6116946908845735
+      },
+      "location_method": "map",
+      "opening_hours": "12:00-01:00",
+      "pickup_time_start": "12:30",
+      "pickup_time_end": "23:30",
+      "average_price_range": "80-180 DH",
+      "payment_methods": "cash,card",
+      "status": "active",
+      "image_url": "https://example.com/bodega.jpg",
+      "offers": [
+        {
+          "id": 6,
+          "dish_name": "Assortiment Tapas 10 pièces",
+          "description": "Patatas bravas, croquetas, calamars, chorizo, tortilla",
+          "normal_price": 110,
+          "discounted_price": 70,
+          "discount_percentage": 36,
+          "category": "Tapas",
+          "timeslots": [
+            {
+              "day": "Vendredi",
+              "start_time": "17:00",
+              "end_time": "20:00"
+            }
+          ],
+          "available_quantity": 20,
+          "image_url": "https://example.com/tapas.jpg"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "owner_id": 7,
+      "name": "Café de Paris",
+      "description": "Café bistrot français traditionnel",
+      "cuisine_type": "Français",
+      "address": "Boulevard d'Anfa, Casablanca",
+      "location": {
+        "latitude": 33.589235,
+        "longitude": -7.645892
+      },
+      "location_method": "map",
+      "opening_hours": "07:00-22:00",
+      "pickup_time_start": "08:00",
+      "pickup_time_end": "21:30",
+      "average_price_range": "60-150 DH",
+      "payment_methods": "cash,card",
+      "status": "active",
+      "image_url": "https://example.com/cafe-paris.jpg",
+      "offers": []
+    },
+    {
+      "id": 8,
+      "owner_id": 8,
+      "name": "Sushi Shop Anfa",
+      "description": "Sushi frais et créations japonaises premium",
+      "cuisine_type": "Japonais",
+      "address": "Boulevard d'Anfa, Casablanca",
+      "location": {
+        "latitude": 33.587523,
+        "longitude": -7.644682
+      },
+      "location_method": "map",
+      "opening_hours": "12:00-22:30",
+      "pickup_time_start": "12:30",
+      "pickup_time_end": "22:00",
+      "average_price_range": "150-300 DH",
+      "payment_methods": "card,cash",
+      "status": "active",
+      "image_url": "https://example.com/sushi.jpg",
+      "offers": [
+        {
+          "id": 11,
+          "dish_name": "Mix Sushi 24 pièces",
+          "description": "Assortiment sushis, makis et california rolls",
+          "normal_price": 180,
+          "discounted_price": 120,
+          "discount_percentage": 33,
+          "category": "Sushi",
+          "timeslots": [
+            {
+              "day": "Mercredi",
+              "start_time": "15:00",
+              "end_time": "18:00"
+            }
+          ],
+          "available_quantity": 15,
+          "image_url": "https://example.com/sushi-mix.jpg"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "owner_id": 9,
+      "name": "Pizzeria Roma",
+      "description": "Pizzas napolitaines au feu de bois",
+      "cuisine_type": "Italien",
+      "address": "Rue Allal Ben Abdellah, Casablanca",
+      "location": {
+        "latitude": 33.596124,
+        "longitude": -7.612358
+      },
+      "location_method": "map",
+      "opening_hours": "11:30-23:00",
+      "pickup_time_start": "12:00",
+      "pickup_time_end": "22:30",
+      "average_price_range": "65-130 DH",
+      "payment_methods": "cash,card",
+      "status": "active",
+      "image_url": "https://example.com/roma.jpg",
+      "offers": []
+    },
+    {
+      "id": 10,
+      "owner_id": 10,
+      "name": "Snack Hassan",
+      "description": "Snack populaire, sandwichs marocains et chawarma",
+      "cuisine_type": "Snack",
+      "address": "Rue Allal Ben Abdellah, Casablanca",
+      "location": {
+        "latitude": 33.594812,
+        "longitude": -7.611235
+      },
+      "location_method": "gps",
+      "opening_hours": "10:00-23:00",
+      "pickup_time_start": "10:30",
+      "pickup_time_end": "22:30",
+      "average_price_range": "15-45 DH",
+      "payment_methods": "cash",
+      "status": "active",
+      "image_url": "https://example.com/snack.jpg",
+      "offers": [
+        {
+          "id": 10,
+          "dish_name": "Chawarma Poulet",
+          "description": "Sandwich chawarma poulet, sauce blanche, frites",
+          "normal_price": 28,
+          "discounted_price": 18,
+          "discount_percentage": 36,
+          "category": "Sandwich",
+          "timeslots": [
+            {
+              "day": "Lundi-Vendredi",
+              "start_time": "15:00",
+              "end_time": "17:00"
+            }
+          ],
+          "available_quantity": 50,
+          "image_url": "https://example.com/chawarma.jpg"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "owner_id": 11,
+      "name": "Ocean Breeze",
+      "description": "Restaurant vue mer avec terrasse",
+      "cuisine_type": "International",
+      "address": "Boulevard de la Corniche, Ain Diab, Casablanca",
+      "location": {
+        "latitude": 33.604892,
+        "longitude": -7.658234
+      },
+      "location_method": "map",
+      "opening_hours": "11:00-23:30",
+      "pickup_time_start": "11:30",
+      "pickup_time_end": "23:00",
+      "average_price_range": "120-280 DH",
+      "payment_methods": "card,cash",
+      "status": "active",
+      "image_url": "https://example.com/ocean.jpg",
+      "offers": []
+    },
+    {
+      "id": 12,
+      "owner_id": 12,
+      "name": "Burger House Anfa",
+      "description": "Burgers artisanaux premium façon américaine",
+      "cuisine_type": "Fast Food",
+      "address": "Boulevard d'Anfa, Casablanca",
+      "location": {
+        "latitude": 33.589215,
+        "longitude": -7.646012
+      },
+      "location_method": "gps",
+      "opening_hours": "11:00-23:00",
+      "pickup_time_start": "11:30",
+      "pickup_time_end": "22:30",
+      "average_price_range": "50-100 DH",
+      "payment_methods": "cash,card",
+      "status": "active",
+      "image_url": "https://example.com/burger.jpg",
+      "offers": [
+        {
+          "id": 12,
+          "dish_name": "Double Cheese Burger Menu",
+          "description": "Double burger cheddar + frites + boisson",
+          "normal_price": 68,
+          "discounted_price": 42,
+          "discount_percentage": 38,
+          "category": "Menu",
+          "timeslots": [
+            {
+              "day": "Lundi-Mercredi",
+              "start_time": "15:00",
+              "end_time": "18:00"
+            }
+          ],
+          "available_quantity": 35,
+          "image_url": "https://example.com/double-burger.jpg"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "total_restaurants": 12,
+    "restaurants_with_offers": 7,
+    "restaurants_without_offers": 5,
+    "city": "Casablanca",
+    "country": "Morocco",
+    "generated_date": "2026-02-04",
+    "note": "Dataset mis à jour avec restaurants sans offres pour affichage par défaut"
+  }
+}

@@ -14,10 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dailydrop.frontend",
-      "config": {
-        "googleMapsApiKey": "AIzaSyDcUR2uz409AYvK8IZ2fYzwpCW5MRf1Id0"
-      }
+      "bundleIdentifier": "com.dailydrop.frontend"
     },
     "android": {
       "package": "com.dailydrop.frontend",
@@ -26,14 +23,10 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyDcUR2uz409AYvK8IZ2fYzwpCW5MRf1Id0"
-        }
-      },
       "permissions": [
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
+        "ACCESS_FINE_LOCATION",
+        "INTERNET"
       ]
     },
     "web": {

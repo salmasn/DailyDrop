@@ -1,0 +1,93 @@
+{
+  "data": [
+    {
+      "restaurant": {
+        "id": 1,
+        "name": "Pizza Napoli",
+        "cuisine_type": "Italien",
+        "address": "15 Avenue Hassan II, Beni Mellal",
+        "latitude": 32.3373,
+        "longitude": -6.3597,
+        "rating": 4.6,
+        "phone": "+212 6 12 34 56 78"
+      },
+      "offers": [
+        {
+          "id": 1,
+          "dish_name": "Pizza Margherita",
+          "normal_price": 60,
+          "offer_price": 35,
+          "discount_percentage": 42,
+          "timeslots": [
+            {
+              "day": "Vendredi",
+              "start_time": "14:00",
+              "end_time": "18:00"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "dish_name": "Pizza 4 Fromages",
+          "normal_price": 75,
+          "offer_price": 50,
+          "discount_percentage": 33,
+          "timeslots": [
+            {
+              "day": "Lundi-Jeudi",
+              "start_time": "11:00",
+              "end_time": "14:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "restaurant": {
+        "id": 2,
+        "name": "Tajine & Co",
+        "cuisine_type": "Marocain",
+        "address": "Boulevard Mohammed V, Beni Mellal",
+        "latitude": 32.3390,
+        "longitude": -6.3650,
+        "rating": 4.8,
+        "phone": "+212 6 23 45 67 89"
+      },
+      "offers": [
+        {
+          "id": 3,
+          "dish_name": "Tajine Poulet Citron",
+          "normal_price": 80,
+          "offer_price": 55,
+          "discount_percentage": 31,
+          "timeslots": [
+            {
+              "day": "Mardi",
+              "start_time": "12:00",
+              "end_time": "15:00"
+            },
+            {
+              "day": "Jeudi",
+              "start_time": "12:00",
+              "end_time": "15:00"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "dish_name": "Couscous Royal",
+          "normal_price": 95,
+          "offer_price": 70,
+          "discount_percentage": 26,
+          "timeslots": [
+            {
+              "day": "Vendredi",
+              "start_time": "12:00",
+              "end_time": "16:00"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
