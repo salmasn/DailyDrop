@@ -21,13 +21,9 @@ import RecommendationScreen from './screens/Client/RecommendationScreen';
 import TrackRestaurantsScreen from './screens/Client/TrackRestaurantsScreen';
 
 import OwnerTabNavigator from './navigation/OwnerTabNavigator';
+import ClientTabNavigator from './navigation/ClientTabNavigator';
 
-// // Dans votre Stack Navigator
-// <Stack.Screen 
-//   name="OwnerHome" 
-//   component={OwnerTabNavigator}  // ✅ Utiliser le Tab Navigator
-//   options={{ headerShown: false }}
-// /> 
+
 
 const Stack = createNativeStackNavigator();
 
@@ -52,6 +48,7 @@ export default function App() {
           <Stack.Screen name="RestaurantGPSLocation" component={RestaurantGPSLocation} />
           <Stack.Screen name="RestaurantMapSelection" component={RestaurantMapSelection} />
           <Stack.Screen name="OwnerHome"  component={OwnerTabNavigator}  options={{ headerShown: false }}/>
+          <Stack.Screen name="ClientHome"  component={ClientTabNavigator}  options={{ headerShown: false }}/>
         </Stack.Navigator>
         <StatusBar style="light" />
       </NavigationContainer>

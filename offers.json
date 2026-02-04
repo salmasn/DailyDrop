@@ -1,0 +1,294 @@
+{
+  "offers": [
+    {
+      "id": 1,
+      "restaurant_id": 1,
+      "restaurant_name": "Pizza Napoli",
+      "dish_name": "Pizza Margherita",
+      "description": "Pizza classique tomate, mozzarella, basilic",
+      "category": "Pizza",
+      "normal_price": 60,
+      "offer_price": 35,
+      "discount_percentage": 42,
+      "image_url": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002",
+      "timeslots": [
+        {
+          "day": "Vendredi",
+          "start_time": "14:00",
+          "end_time": "18:00",
+          "available_quantity": 20,
+          "remaining_quantity": 15
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "restaurant_id": 1,
+      "restaurant_name": "Pizza Napoli",
+      "dish_name": "Pizza 4 Fromages",
+      "description": "Mozzarella, gorgonzola, parmesan, chèvre",
+      "category": "Pizza",
+      "normal_price": 75,
+      "offer_price": 50,
+      "discount_percentage": 33,
+      "image_url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+      "timeslots": [
+        {
+          "day": "Lundi-Jeudi",
+          "start_time": "11:00",
+          "end_time": "14:00",
+          "available_quantity": 15,
+          "remaining_quantity": 12
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 3,
+      "restaurant_id": 2,
+      "restaurant_name": "Tajine & Co",
+      "dish_name": "Tajine Poulet Citron",
+      "description": "Poulet fermier, citrons confits, olives vertes",
+      "category": "Plat principal",
+      "normal_price": 80,
+      "offer_price": 55,
+      "discount_percentage": 31,
+      "image_url": "https://images.unsplash.com/photo-1547592166-23ac45744acd",
+      "timeslots": [
+        {
+          "day": "Mardi",
+          "start_time": "12:00",
+          "end_time": "15:00",
+          "available_quantity": 25,
+          "remaining_quantity": 20
+        },
+        {
+          "day": "Jeudi",
+          "start_time": "12:00",
+          "end_time": "15:00",
+          "available_quantity": 25,
+          "remaining_quantity": 18
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 4,
+      "restaurant_id": 2,
+      "restaurant_name": "Tajine & Co",
+      "dish_name": "Couscous Royal",
+      "description": "Couscous maison, légumes, viandes variées",
+      "category": "Plat principal",
+      "normal_price": 95,
+      "offer_price": 70,
+      "discount_percentage": 26,
+      "image_url": "https://images.unsplash.com/photo-1596797038530-2c107229654b",
+      "timeslots": [
+        {
+          "day": "Vendredi",
+          "start_time": "12:00",
+          "end_time": "16:00",
+          "available_quantity": 30,
+          "remaining_quantity": 22
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 5,
+      "restaurant_id": 3,
+      "restaurant_name": "Burger House",
+      "dish_name": "Burger Classique + Frites",
+      "description": "Pain brioche, steak 180g, cheddar, salade, tomate",
+      "category": "Burger",
+      "normal_price": 65,
+      "offer_price": 45,
+      "discount_percentage": 31,
+      "image_url": "https://images.unsplash.com/photo-1550547660-d9450f859349",
+      "timeslots": [
+        {
+          "day": "Lundi-Vendredi",
+          "start_time": "15:00",
+          "end_time": "18:00",
+          "available_quantity": 40,
+          "remaining_quantity": 35
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 6,
+      "restaurant_id": 3,
+      "restaurant_name": "Burger House",
+      "dish_name": "Burger XL BBQ",
+      "description": "Double steak, bacon, oignons frits, sauce BBQ",
+      "category": "Burger",
+      "normal_price": 85,
+      "offer_price": 60,
+      "discount_percentage": 29,
+      "image_url": "https://images.unsplash.com/photo-1553979459-d2229ba7433b",
+      "timeslots": [
+        {
+          "day": "Samedi-Dimanche",
+          "start_time": "19:00",
+          "end_time": "22:00",
+          "available_quantity": 20,
+          "remaining_quantity": 14
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 7,
+      "restaurant_id": 4,
+      "restaurant_name": "Sushi Zen",
+      "dish_name": "Menu Sushi Mix (18 pièces)",
+      "description": "Sashimi, maki, california rolls variés",
+      "category": "Menu",
+      "normal_price": 150,
+      "offer_price": 95,
+      "discount_percentage": 37,
+      "image_url": "https://images.unsplash.com/photo-1583623025817-d180a2221d0a",
+      "timeslots": [
+        {
+          "day": "Lundi-Mercredi",
+          "start_time": "12:00",
+          "end_time": "14:30",
+          "available_quantity": 12,
+          "remaining_quantity": 8
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 8,
+      "restaurant_id": 4,
+      "restaurant_name": "Sushi Zen",
+      "dish_name": "Ramen Tonkotsu",
+      "description": "Bouillon de porc, nouilles, œuf mollet, porc braisé",
+      "category": "Soupe",
+      "normal_price": 70,
+      "offer_price": 50,
+      "discount_percentage": 29,
+      "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624",
+      "timeslots": [
+        {
+          "day": "Tous les jours",
+          "start_time": "18:00",
+          "end_time": "20:00",
+          "available_quantity": 25,
+          "remaining_quantity": 21
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 9,
+      "restaurant_id": 5,
+      "restaurant_name": "Le Gourmet",
+      "dish_name": "Entrecôte Grillée + Accompagnement",
+      "description": "Entrecôte 300g, sauce au choix, légumes grillés",
+      "category": "Viande",
+      "normal_price": 180,
+      "offer_price": 130,
+      "discount_percentage": 28,
+      "image_url": "https://images.unsplash.com/photo-1558030006-450675393462",
+      "timeslots": [
+        {
+          "day": "Mardi-Jeudi",
+          "start_time": "19:00",
+          "end_time": "21:00",
+          "available_quantity": 10,
+          "remaining_quantity": 7
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 10,
+      "restaurant_id": 6,
+      "restaurant_name": "Tacos Express",
+      "dish_name": "Tacos XL Poulet",
+      "description": "Tacos géant, viande poulet, frites, sauces",
+      "category": "Tacos",
+      "normal_price": 40,
+      "offer_price": 28,
+      "discount_percentage": 30,
+      "image_url": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47",
+      "timeslots": [
+        {
+          "day": "Tous les jours",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "available_quantity": 50,
+          "remaining_quantity": 42
+        },
+        {
+          "day": "Tous les jours",
+          "start_time": "21:00",
+          "end_time": "23:00",
+          "available_quantity": 30,
+          "remaining_quantity": 25
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 11,
+      "restaurant_id": 7,
+      "restaurant_name": "Café des Arts",
+      "dish_name": "Petit Déjeuner Complet",
+      "description": "Croissant, jus d'orange, café, confiture maison",
+      "category": "Petit-déjeuner",
+      "normal_price": 35,
+      "offer_price": 25,
+      "discount_percentage": 29,
+      "image_url": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
+      "timeslots": [
+        {
+          "day": "Lundi-Vendredi",
+          "start_time": "08:00",
+          "end_time": "10:00",
+          "available_quantity": 35,
+          "remaining_quantity": 28
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    },
+    {
+      "id": 12,
+      "restaurant_id": 8,
+      "restaurant_name": "Dragon d'Or",
+      "dish_name": "Menu Déjeuner Express",
+      "description": "Nems, riz cantonais, poulet aux légumes",
+      "category": "Menu",
+      "normal_price": 70,
+      "offer_price": 48,
+      "discount_percentage": 31,
+      "image_url": "https://images.unsplash.com/photo-1512058564366-18510be2db19",
+      "timeslots": [
+        {
+          "day": "Lundi-Vendredi",
+          "start_time": "12:00",
+          "end_time": "14:30",
+          "available_quantity": 20,
+          "remaining_quantity": 16
+        }
+      ],
+      "valid_until": "2026-02-28",
+      "status": "active"
+    }
+  ]
+}

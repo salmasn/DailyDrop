@@ -20,7 +20,7 @@ export const useAuth = () => {
   useEffect(() => {
     if (isLoggedIn && role) {
       if (role === 'client') {
-        navigation.replace('Recommendation'); // Page client
+        navigation.replace('ClientHome'); // Page client
       } else if (role === 'restaurant_owner') {
         navigation.replace('OwnerHome'); // Page owner
       }

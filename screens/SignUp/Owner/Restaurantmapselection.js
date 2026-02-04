@@ -9,20 +9,13 @@ import {
   Alert,
   Keyboard,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
 
 function RestaurantMapSelection({ navigation, route }) {
   const existingData = route?.params?.formData || {};
-  const mapRef = useRef(null);
+  const webViewRef = useRef(null);
   
-  const [region, setRegion] = useState({
-    latitude: 32.3373,
-    longitude: -6.3498,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-
   const [markerPosition, setMarkerPosition] = useState({
     latitude: 32.3373,
     longitude: -6.3498,
@@ -31,13 +24,7 @@ function RestaurantMapSelection({ navigation, route }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [address, setAddress] = useState('');
 
-  // Quand l'utilisateur clique sur la carte
-  const handleMapPress = (event) => {
-    const { coordinate } = event.nativeEvent;
-    setMarkerPosition(coordinate);
-    getAddressFromCoordinates(coordinate.latitude, coordinate.longitude);
-  };
-
+  
   // Obtenir l'adresse depuis les coordonnées
   const getAddressFromCoordinates = async (latitude, longitude) => {
     try {
@@ -78,21 +65,24 @@ function RestaurantMapSelection({ navigation, route }) {
 
       if (result && result.length > 0) {
         const location = result[0];
-        const newRegion = {
+        const newPos = {
           latitude: location.latitude,
           longitude: location.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+       
         };
 
-        setRegion(newRegion);
-        setMarkerPosition({
-          latitude: location.latitude,
-          longitude: location.longitude,
-        });
-
-        mapRef.current?.animateToRegion(newRegion, 1000);
+        setMarkerPosition(newPos);
         getAddressFromCoordinates(location.latitude, location.longitude);
+
+        // Animer la carte vers la nouvelle position
+        if (webViewRef.current) {
+          const js = `
+            map.setView([${location.latitude}, ${location.longitude}], 16);
+            marker.setLatLng([${location.latitude}, ${location.longitude}]);
+            true;
+          `;
+          webViewRef.current.injectJavaScript(js);
+        }
       } else {
         Alert.alert('Introuvable', 'Aucun résultat trouvé pour cette adresse');
       }
@@ -117,20 +107,42 @@ function RestaurantMapSelection({ navigation, route }) {
       });
 
       const { latitude, longitude } = currentLocation.coords;
-      const newRegion = {
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      };
-
-      setRegion(newRegion);
+      
       setMarkerPosition({ latitude, longitude });
-      mapRef.current?.animateToRegion(newRegion, 1000);
+      
       getAddressFromCoordinates(latitude, longitude);
+
+      // Animer vers la position actuelle
+      if (webViewRef.current) {
+        const js = `
+          map.setView([${latitude}, ${longitude}], 16);
+          marker.setLatLng([${latitude}, ${longitude}]);
+          true;
+        `;
+        webViewRef.current.injectJavaScript(js);
+      }
     } catch (error) {
       Alert.alert('Erreur', 'Impossible d\'obtenir votre position');
       console.error(error);
+    }
+  };
+
+  // Gérer les messages de la WebView
+  const handleWebViewMessage = (event) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      
+      if (data.type === 'mapClick') {
+        const { lat, lng } = data;
+        setMarkerPosition({ latitude: lat, longitude: lng });
+        getAddressFromCoordinates(lat, lng);
+      } else if (data.type === 'markerDrag') {
+        const { lat, lng } = data;
+        setMarkerPosition({ latitude: lat, longitude: lng });
+        getAddressFromCoordinates(lat, lng);
+      }
+    } catch (err) {
+      console.error('WebView message error:', err);
     }
   };
 
@@ -141,7 +153,7 @@ function RestaurantMapSelection({ navigation, route }) {
       return;
     }
 
-    // Retourner vers RestaurantLocationChoice avec les coordonnées
+    
     navigation.navigate('RestaurantLocationChoice', {
       formData: {
         ...existingData,
@@ -154,6 +166,70 @@ function RestaurantMapSelection({ navigation, route }) {
       }
     });
   };
+
+  // HTML de la carte
+  const mapHTML = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <style>
+        html, body, #map {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="map"></div>
+      <script>
+        // Initialisation de la carte
+        var map = L.map('map', {
+          zoomControl: true,
+          attributionControl: false
+        }).setView([${markerPosition.latitude}, ${markerPosition.longitude}], 13);
+
+        // Tuiles OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Marqueur draggable
+        var marker = L.marker([${markerPosition.latitude}, ${markerPosition.longitude}], {
+          draggable: true
+        }).addTo(map);
+
+        // Quand on clique sur la carte
+        map.on('click', function(e) {
+          var lat = e.latlng.lat;
+          var lng = e.latlng.lng;
+          marker.setLatLng([lat, lng]);
+          
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: 'mapClick',
+            lat: lat,
+            lng: lng
+          }));
+        });
+
+        // Quand on déplace le marqueur
+        marker.on('dragend', function(e) {
+          var pos = marker.getLatLng();
+          
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: 'markerDrag',
+            lat: pos.lat,
+            lng: pos.lng
+          }));
+        });
+      </script>
+    </body>
+  </html>
+  `;
 
   return (
     <View style={styles.container}>
@@ -188,33 +264,24 @@ function RestaurantMapSelection({ navigation, route }) {
           style={styles.gpsButton}
           onPress={getCurrentLocation}
         >
-           <Image
-                source={require('../../../assets/Icons/map.png')}
-                style={styles.logo}
-                resizeMode="contain"
-            />
+          <Image
+            source={require('../../../assets/Icons/map.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
       </View>
 
-      {/* Map */}
-      <MapView
-        ref={mapRef}
+      {/* WebView Map */}
+      <WebView
+        ref={webViewRef}
+        originWhitelist={['*']}
+        source={{ html: mapHTML }}
         style={styles.map}
-        initialRegion={region}
-        onPress={handleMapPress}
-        showsUserLocation
-        showsMyLocationButton={false}
-      >
-        <Marker
-          coordinate={markerPosition}
-          draggable
-          onDragEnd={(e) => {
-            const { latitude, longitude } = e.nativeEvent.coordinate;
-            setMarkerPosition({ latitude, longitude });
-            getAddressFromCoordinates(latitude, longitude);
-          }}
-        />
-      </MapView>
+        onMessage={handleWebViewMessage}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+      />
 
       {/* Info de localisation sélectionnée */}
       {address ? (
@@ -275,31 +342,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  progressContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: 'white',
-  },
-  progressBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  progressStep: {
-    flex: 1,
-    height: 4,
-    backgroundColor: '#e0e0e0',
-    marginHorizontal: 3,
-    borderRadius: 2,
-  },
-  progressStepActive: {
-    backgroundColor: '#5a2c1c',
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
+  
   searchContainer: {
     flexDirection: 'row',
     paddingHorizontal: 15,
@@ -334,9 +377,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  gpsButtonText: {
-    fontSize: 18,
-  },
+  
   map: {
     flex: 1,
   },
@@ -383,11 +424,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
     padding: 10,
   },
-  changeMethodText: {
-    color: '#5a2c1c',
-    fontSize: 14,
-    textDecorationLine: 'underline',
-  },
+
 });
+
 
 export default RestaurantMapSelection;
