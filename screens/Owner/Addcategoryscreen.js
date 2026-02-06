@@ -13,12 +13,15 @@ import {
 } from 'react-native';
 import ScreenHeader from '../../components/Owner/ScreenHeader';
 import * as ImagePicker from 'expo-image-picker';
-import { mealService, categoryService, imageService } from '../../services/categoryService';
+import imageService from '../../services/imageService';
+import mealService from '../../services/mealService';
+import categoryService from '../../services/categoryService';
+
 
 function AddCategoryScreen({ navigation, route }) {
   // Complete list of available categories
   const availableCategories = [
-    'Pizza', 'Burger', 'Tacos', 'Pastry', 'Sandwich', 'Salad',
+    'Pizza', 'Burger', 'Tacos', 'Sandwich', 'Salad',
     'Pasta', 'Meat', 'Fish', 'Vegetarian', 'Fast Food', 'Traditional',
     'Oriental', 'Asian', 'Sweet', 'Savory', 'Beverages', 'Dessert',
     'Pastries', 'Grilled', 'Wraps', 'Sushi', 'Crepes', 'Ice Cream',

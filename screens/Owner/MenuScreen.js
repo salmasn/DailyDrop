@@ -16,7 +16,8 @@ import ScreenHeader from '../../components/Owner/ScreenHeader';
 // Importation des services
 import storageService from '../../services/storageService';
 import restaurantService from '../../services/restaurantService';
-import { categoryService } from '../../services/categoryService';
+import categoryService from '../../services/categoryService';
+
 
 // Fonction pour décoder le JWT
 const decodeJWT = (token) => {
@@ -279,20 +280,14 @@ function MenuScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Categories Grid - Design inspiré de l'image */}
+        {/* Categories Grid */}
         <View style={styles.recipesSection}>
           {filteredCategories.length > 0 ? (
             filteredCategories.map((category, index) => {
               // Couleurs différentes pour chaque meal
               const mealColors = [
-                '#FF6B6B', // Rouge corail
-                '#4ECDC4', // Turquoise
-                '#FFD93D', // Jaune
-                '#95E1D3', // Vert menthe
-                '#F38181', // Rose saumon
-                '#AA96DA', // Violet
-                '#FCBAD3', // Rose
-                '#A8D8EA', // Bleu ciel
+                '#FF6B6B', '#4ECDC4', '#FFD93D', '#95E1D3',
+                '#F38181', '#AA96DA', '#FCBAD3', '#A8D8EA',
               ];
               const mealColor = mealColors[index % mealColors.length];
 
@@ -301,7 +296,10 @@ function MenuScreen({ navigation }) {
                   key={category.id}
                   style={styles.categoryCompactCard}
                   activeOpacity={0.9}
-                  onPress={() => navigation.navigate('CategoryDetails', { categoryId: category.id })}
+                  onPress={() => navigation.navigate('CategoryDetails', { 
+                    categoryId: category.id,
+                    category: category  // ✅ PASSER toute la catégorie
+                  })}
                 >
                   {/* Image de fond */}
                   {category.imageUrl ? (
@@ -331,7 +329,7 @@ function MenuScreen({ navigation }) {
                         </Text>
                       </View>
 
-                      {/* Icônes d'actions avec images personnalisées */}
+                      {/* Icônes d'actions */}
                       <View style={styles.categoryCompactActions}>
                         <TouchableOpacity 
                           style={styles.editIconButton}
@@ -363,7 +361,7 @@ function MenuScreen({ navigation }) {
                       </View>
                     </View>
 
-                    {/* Footer: Badge nom collé en bas avec coins arrondis - Taille auto */}
+                    {/* Footer: Badge nom */}
                     <View style={styles.categoryCompactFooter}>
                       <Text style={styles.categoryCompactName} numberOfLines={1}>
                         {category.name}
@@ -496,8 +494,6 @@ const styles = StyleSheet.create({
     height: 24,
     tintColor: 'white',
   },
-  
-  // ===== NOUVEAUX STYLES COMPACT CARDS =====
   recipesSection: {
     paddingTop: 5,
     paddingBottom: 20,
@@ -582,7 +578,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // Icônes personnalisées
   editIcon: {
     width: 16,
     height: 16,
@@ -593,7 +588,6 @@ const styles = StyleSheet.create({
     height: 16,
     tintColor: 'white',
   },
-  // Footer avec taille auto pour le badge du nom
   categoryCompactFooter: {
     position: 'absolute',
     bottom: 0,
@@ -610,7 +604,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderBottomLeftRadius: 16,
   },
-  
   emptyState: {
     alignItems: 'center',
     paddingVertical: 60,
