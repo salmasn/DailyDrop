@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -10,37 +10,23 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { useRestaurantStep3Form } from '../../../hooks/RegistrationOwner/Userestaurantstep3form';
 
 function RestaurantSignUpStep3({ navigation, route }) {
   const existingData = route?.params?.formData || {};
-  
-  const [formData, setFormData] = useState({
-    openingHours: existingData.openingHours || '',
-    pickupTimeStart: existingData.pickupTimeStart || '',
-    pickupTimeEnd: existingData.pickupTimeEnd || '',
-  });
-  
-  const [error, setError] = useState('');
+  const { formData, error, updateField, getCompleteData } = useRestaurantStep3Form(existingData);
 
-  const updateFormData = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-    setError('');
-  };
-
-  const validateAndContinue = () => {
+  const handleContinue = () => {
     navigation.navigate('RestaurantSignUpStep4', {
-      formData: { 
-        ...existingData, 
-        ...formData,
-      }
+      formData: getCompleteData()
     });
   };
 
-  const goBack = () => {
-    navigation.navigate('RestaurantSignUpStep2', {
-      formData: { ...existingData, ...formData }
-    });
-  };
+  const handleBack = () => {
+  navigation.navigate('RestaurantLocationChoice', {
+    formData: getCompleteData()
+  });
+};
 
   return (
     <KeyboardAvoidingView
@@ -51,99 +37,134 @@ function RestaurantSignUpStep3({ navigation, route }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={goBack}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../../assets/images/logo.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
-
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={styles.progressStep} />
-          </View>
-          <Text style={styles.progressText}>Step 4 of 5</Text>
-        </View>
-
-        <View style={styles.formHeader}>
-          <Text style={styles.formTitle}>Opening Hours</Text>
-          <Text style={styles.formSubtitle}>
-            Set your working hours
-          </Text>
-        </View>
+        <BackButton onPress={handleBack} />
+        <Logo />
+        <ProgressBar step={4} total={5} />
+        <FormHeader 
+          title="Opening Hours"
+          subtitle="Set your working hours"
+        />
 
         <View style={styles.formContainer}>
-          {error ? (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{error}</Text>
-            </View>
-          ) : null}
+          {error && <ErrorMessage message={error} />}
 
-          {/* Section Horaires */}
-          <Text style={styles.sectionTitle}>Opening Hours</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: 09:00 - 22:00"
-            placeholderTextColor="#999"
-            value={formData.openingHours}
-            onChangeText={(text) => updateFormData('openingHours', text)}
+          <HoursSection
+            openingHours={formData.openingHours}
+            pickupTimeStart={formData.pickupTimeStart}
+            pickupTimeEnd={formData.pickupTimeEnd}
+            onUpdateField={updateField}
           />
 
-          <Text style={styles.sectionTitle}>Pickup Window</Text>
-
-          <View style={styles.rowInputs}>
-            <View style={styles.halfInputContainer}>
-              <Text style={styles.inputLabel}>Start Time *</Text>
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="09:00"
-                placeholderTextColor="#999"
-                value={formData.pickupTimeStart}
-                onChangeText={(text) => updateFormData('pickupTimeStart', text)}
-              />
-            </View>
-
-            <View style={styles.halfInputContainer}>
-              <Text style={styles.inputLabel}>End Time *</Text>
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="18:00"
-                placeholderTextColor="#999"
-                value={formData.pickupTimeEnd}
-                onChangeText={(text) => updateFormData('pickupTimeEnd', text)}
-              />
-            </View>
-          </View>
-
-          <Text style={styles.helperText}>
-            When can customers pick up their orders?
-          </Text>
-
-          <TouchableOpacity
-            style={styles.continueButton}
-            onPress={validateAndContinue}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.continueButtonText}>Continue →</Text>
-          </TouchableOpacity>
+          <ContinueButton onPress={handleContinue} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+
+// Composants de présentation réutilisables
+const BackButton = ({ onPress }) => (
+  <TouchableOpacity style={styles.backButton} onPress={onPress}>
+    <Text style={styles.backButtonText}>← Back</Text>
+  </TouchableOpacity>
+);
+
+const Logo = () => (
+  <View style={styles.logoContainer}>
+    <Image
+      source={require('../../../assets/images/logo.png')}
+      style={styles.logo}
+      resizeMode="contain"
+    />
+  </View>
+);
+
+const ProgressBar = ({ step, total }) => (
+  <View style={styles.progressContainer}>
+    <View style={styles.progressBar}>
+      {Array.from({ length: total }).map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.progressStep,
+            index < step && styles.progressStepActive
+          ]}
+        />
+      ))}
+    </View>
+    <Text style={styles.progressText}>Step {step} of {total}</Text>
+  </View>
+);
+
+const FormHeader = ({ title, subtitle }) => (
+  <View style={styles.formHeader}>
+    <Text style={styles.formTitle}>{title}</Text>
+    <Text style={styles.formSubtitle}>{subtitle}</Text>
+  </View>
+);
+
+const ErrorMessage = ({ message }) => (
+  <View style={styles.errorContainer}>
+    <Text style={styles.errorText}>{message}</Text>
+  </View>
+);
+
+const HoursSection = ({ 
+  openingHours, 
+  pickupTimeStart, 
+  pickupTimeEnd, 
+  onUpdateField 
+}) => (
+  <>
+    <Text style={styles.sectionTitle}>Opening Hours</Text>
+    <TextInput
+      style={styles.input}
+      placeholder="Ex: 09:00 - 22:00"
+      placeholderTextColor="#999"
+      value={openingHours}
+      onChangeText={(text) => onUpdateField('openingHours', text)}
+    />
+
+    <Text style={styles.sectionTitle}>Pickup Window</Text>
+    <View style={styles.rowInputs}>
+      <View style={styles.halfInputContainer}>
+        <Text style={styles.inputLabel}>Start Time *</Text>
+        <TextInput
+          style={[styles.input, styles.halfInput]}
+          placeholder="09:00"
+          placeholderTextColor="#999"
+          value={pickupTimeStart}
+          onChangeText={(text) => onUpdateField('pickupTimeStart', text)}
+        />
+      </View>
+
+      <View style={styles.halfInputContainer}>
+        <Text style={styles.inputLabel}>End Time *</Text>
+        <TextInput
+          style={[styles.input, styles.halfInput]}
+          placeholder="18:00"
+          placeholderTextColor="#999"
+          value={pickupTimeEnd}
+          onChangeText={(text) => onUpdateField('pickupTimeEnd', text)}
+        />
+      </View>
+    </View>
+
+    <Text style={styles.helperText}>
+      When can customers pick up their orders?
+    </Text>
+  </>
+);
+
+const ContinueButton = ({ onPress }) => (
+  <TouchableOpacity
+    style={styles.continueButton}
+    onPress={onPress}
+    activeOpacity={0.8}
+  >
+    <Text style={styles.continueButtonText}>Continue →</Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   container: {

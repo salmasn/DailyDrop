@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -10,62 +10,18 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { useRestaurantSignUpStep1 } from '../../../hooks/RegistrationOwner/useRestaurantSignUpStep1';
+
 
 function RestaurantSignUpStep1({ navigation, route }) {
-  const existingData = route?.params?.formData || {};
-  
-  const [formData, setFormData] = useState({
-    ownerFullName: existingData.ownerFullName || '',
-    ownerEmail: existingData.ownerEmail || '',
-    ownerPassword: existingData.ownerPassword || '',
-    ownerConfirmPassword: existingData.ownerConfirmPassword || '',
-    phoneNumber: existingData.phoneNumber || '',
-  });
-  
-  const [error, setError] = useState('');
-
-  const updateFormData = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-    setError('');
-  };
-
-  // const validateAndContinue = () => {
-  //   if (!formData.ownerFullName || !formData.ownerEmail || !formData.ownerPassword || 
-  //       !formData.ownerConfirmPassword || !formData.phoneNumber) {
-  //     setError('Please fill in all fields');
-  //     return;
-  //   }
-
-  //   if (formData.ownerPassword !== formData.ownerConfirmPassword) {
-  //     setError('Passwords do not match');
-  //     return;
-  //   }
-
-  //   if (formData.ownerPassword.length < 6) {
-  //     setError('Password must be at least 6 characters long');
-  //     return;
-  //   }
-
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   if (!emailRegex.test(formData.ownerEmail)) {
-  //     setError('Please enter a valid email address');
-  //     return;
-  //   }
-
-  //   // Navigate to step 2 with current data
-  //   navigation.navigate('RestaurantSignUpStep2', {
-  //     formData: { ...existingData, ...formData }
-  //   });
-  // };
-
-  const validateAndContinue=()=>
-  {
-
-    navigation.navigate('RestaurantSignUpStep2', {
-     formData: { ...existingData, ...formData }
-     });
-  }
-
+  const {
+    formData,
+    error,
+    updateFormData,
+    validateAndContinue,
+    handleGoBack,
+    handleNavigateToLogin,
+  } = useRestaurantSignUpStep1(navigation, route);
 
   return (
     <KeyboardAvoidingView
@@ -78,7 +34,7 @@ function RestaurantSignUpStep1({ navigation, route }) {
       >
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={handleGoBack}
         >
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
@@ -173,7 +129,7 @@ function RestaurantSignUpStep1({ navigation, route }) {
 
           <View style={styles.loginLinkContainer}>
             <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={handleNavigateToLogin}>
               <Text style={styles.loginLink}>Sign In</Text>
             </TouchableOpacity>
           </View>

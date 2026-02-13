@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "./AuthThunk";
+
 const initialState = {
   isLoggedIn: false,
   error: null,

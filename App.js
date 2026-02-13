@@ -24,8 +24,7 @@ import ClientTabNavigator from './navigation/ClientTabNavigator';
 
 
 
-//import OwnerHomeScreen from './screens/Owner/OwnerHomeScreen';
-import MealsCategories from './screens/Owner/MealsCategories';
+
 import AddCategoryScreen from './screens/Owner/Addcategoryscreen';
 import CategoryDetailsScreen from './screens/Owner/Categorydetailsscreen';
 
@@ -54,7 +53,7 @@ export default function App() {
           <Stack.Screen name="RestaurantMapSelection" component={RestaurantMapSelection} />
           <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} />
           <Stack.Screen name="CategoryDetails" component={CategoryDetailsScreen} />
-          <Stack.Screen name="MealsCategories" component={MealsCategories} />
+          
           <Stack.Screen name="OwnerHome"  component={OwnerTabNavigator}  options={{ headerShown: false }}/>
           <Stack.Screen name="ClientHome"  component={ClientTabNavigator}  options={{ headerShown: false }}/>
         </Stack.Navigator>

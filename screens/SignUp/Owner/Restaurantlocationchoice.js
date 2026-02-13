@@ -7,85 +7,29 @@ import {
   Image,
   ScrollView,
   TextInput,
-  Alert,
+
 } from 'react-native';
 
+import { useRestaurantLocationChoice } from '../../../hooks/RegistrationOwner/Userestaurantlocationchoice';
+
+/**
+ * RestaurantLocationChoice Component
+ * Displays location selection options for restaurant signup
+ * Follows SRP by delegating all business logic to custom hook
+ */
 function RestaurantLocationChoice({ navigation, route }) {
-  const existingData = route?.params?.formData || {};
-  
-  // États pour les coordonnées
-  const [latitude, setLatitude] = React.useState('');
-  const [longitude, setLongitude] = React.useState('');
-  const [address, setAddress] = React.useState('');
-  const [locationMethod, setLocationMethod] = React.useState('');
-  const [locationConfirmed, setLocationConfirmed] = React.useState(false);
-
-  // Charger les coordonnées si elles existent déjà
-  React.useEffect(() => {
-    if (existingData.location) {
-      setLatitude(existingData.location.latitude.toFixed(6));
-      setLongitude(existingData.location.longitude.toFixed(6));
-      setAddress(existingData.location.address);
-      setLocationMethod(existingData.location.method);
-      setLocationConfirmed(true);
-    }
-  }, []);
-
-  // Écouter les retours de navigation avec les coordonnées
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      const params = route?.params;
-      if (params?.formData?.location) {
-        const loc = params.formData.location;
-        setLatitude(loc.latitude.toFixed(6));
-        setLongitude(loc.longitude.toFixed(6));
-        setAddress(loc.address);
-        setLocationMethod(loc.method);
-        setLocationConfirmed(true);
-      }
-    });
-
-    return unsubscribe;
-  }, [navigation, route]);
-
-  const handleGPSLocation = () => {
-    navigation.navigate('RestaurantGPSLocation', {
-      formData: existingData
-    });
-  };
-
-  const handleMapSelection = () => {
-    navigation.navigate('RestaurantMapSelection', {
-      formData: existingData
-    });
-  };
-
-  const handleContinue = () => {
-    if (!locationConfirmed) {
-      Alert.alert('Attention', 'Veuillez d\'abord sélectionner une localisation');
-      return;
-    }
-
-    navigation.navigate('RestaurantSignUpStep3', {
-      formData: {
-        ...existingData,
-        location: {
-          latitude: parseFloat(latitude),
-          longitude: parseFloat(longitude),
-          address: address,
-          method: locationMethod,
-        }
-      }
-    });
-  };
-
-  const handleChangeLocation = () => {
-    setLocationConfirmed(false);
-    setLatitude('');
-    setLongitude('');
-    setAddress('');
-    setLocationMethod('');
-  };
+  const {
+    latitude,
+    longitude,
+    address,
+    locationMethod,
+    locationConfirmed,
+    handleGPSLocation,
+    handleMapSelection,
+    handleContinue,
+    handleChangeLocation,
+    handleGoBack,
+  } = useRestaurantLocationChoice(navigation, route);
 
   return (
     <View style={styles.container}>
@@ -95,7 +39,7 @@ function RestaurantLocationChoice({ navigation, route }) {
       >
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={handleGoBack}
         >
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
@@ -126,20 +70,10 @@ function RestaurantLocationChoice({ navigation, route }) {
           </Text>
         </View>
         
-        {/* Afficher les options uniquement si la localisation n'est pas confirmée */}
+
         {!locationConfirmed ? (
           <View style={styles.optionsContainer}>
-             {/* <View style={styles.locationConfirmed}>
-              <Text style={styles.locationIcon}>✓</Text>
-              <View style={styles.locationDetails}>
-                <Text style={styles.locationAddressText}>{address}</Text>
-                <Text style={styles.locationMethodText}>
-                  Méthode : {locationMethod === 'gps' ? 'GPS Automatique' : 'Sélection sur Carte'}
-                </Text>
-              </View>
-            </View> */}
-            
-            {/* Option 1: GPS Location */}
+
             <TouchableOpacity
               style={styles.optionCard}
               onPress={handleGPSLocation}
@@ -161,7 +95,7 @@ function RestaurantLocationChoice({ navigation, route }) {
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
 
-            {/* Option 2: Map Selection */}
+ 
             <TouchableOpacity
               style={styles.optionCard}
               onPress={handleMapSelection}
@@ -184,8 +118,8 @@ function RestaurantLocationChoice({ navigation, route }) {
             </TouchableOpacity>
           </View>
         ) : (
-          /* Afficher les coordonnées confirmées */
-          <View style={styles.confirmedContainer}>
+         
+         <View style={styles.confirmedContainer}>
             <Text style={styles.sectionTitle}>GPS Coordinates (WGS84)</Text>
             
             <View style={styles.rowInputs}>
@@ -335,9 +269,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 15,
   },
-  iconEmoji: {
-    fontSize: 28,
-  },
+  
   optionContent: {
     flex: 1,
   },
@@ -368,34 +300,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  locationConfirmed: {
-    flexDirection: 'row',
-    backgroundColor: '#e8f5e9',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: '#4caf50',
-  },
-  locationIcon: {
-    fontSize: 24,
-    color: '#4caf50',
-    marginRight: 12,
-  },
-  locationDetails: {
-    flex: 1,
-  },
-  locationAddressText: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  locationMethodText: {
-    fontSize: 12,
-    color: '#666',
-    fontStyle: 'italic',
-  },
+  
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',

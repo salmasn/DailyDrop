@@ -49,9 +49,8 @@ export const useAuth = () => {
         alert(`Erreur de connexion : ${resultAction.payload}`);
         return;
       }
-      
+
     
-      
     } catch (error) {
       alert(`Erreur : ${error.message}`);
     }

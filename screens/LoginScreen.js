@@ -15,9 +15,7 @@ import {
 import { useAuth } from "../hooks/useAuth";
 
 function LoginScreen({ navigation }) {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [loading, setLoading] = useState(false);
+  
   const [error, setError] = useState('');
 
   const handleSignUp = () =>

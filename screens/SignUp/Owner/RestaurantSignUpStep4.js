@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -10,71 +10,28 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
-import { restaurantOwnerService } from '../../../services/restaurantOwnerService'; // ✅ Import du service
+import { useRestaurantRegistration } from '../../../hooks/RegistrationOwner/Userestaurantregistration';
 
 function RestaurantSignUpStep4({ navigation, route }) {
   const existingData = route?.params?.formData || {};
   
-  const [formData, setFormData] = useState({
-    averagePriceRange: existingData.averagePriceRange || '',
-    paymentMethods: existingData.paymentMethods || '',
-  });
-  
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { 
+    formData, 
+    loading, 
+    error, 
+    updateField, 
+    handleRegistration,
+    getCompleteData 
+  } = useRestaurantRegistration(existingData);
 
-  const updateFormData = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-    setError('');
+  const onSignUp = async () => {
+    await handleRegistration(() => navigation.replace('Login'));
   };
 
-  const handleSignUp = async () => {
-    setLoading(true);
-    setError('');
-
-    
-    try {
-      // Combiner toutes les données des étapes précédentes
-      const completeData = { ...existingData, ...formData };
-
-      console.log('📝 Données complètes:', completeData);
-
-      // Appeler le service d'inscription
-      const response = await restaurantOwnerService.register(completeData);
-
-      console.log('🎉 Inscription réussie:', response);
-
-      setLoading(false);
-
-      // Afficher un message de succès
-      Alert.alert(
-        'Inscription réussie !',
-        `Votre restaurant "${response.restaurant.name}" a été créé avec succès. Statut: ${response.restaurant.status}`,
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('OwnerHome') 
-          }
-        ]
-      );
-
-    } catch (err) {
-      console.error('❌ Erreur d\'inscription:', err);
-      setError(err.message || 'Une erreur est survenue');
-      setLoading(false);
-      
-      Alert.alert(
-        'Erreur d\'inscription',
-        err.message || 'Une erreur est survenue lors de l\'inscription'
-      );
-    }
-  };
-
-  const goBack = () => {
+  const handleBack = () => {
     navigation.navigate('RestaurantSignUpStep3', {
-      formData: { ...existingData, ...formData }
+      formData: getCompleteData()
     });
   };
 
@@ -87,118 +44,160 @@ function RestaurantSignUpStep4({ navigation, route }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={goBack}
-          disabled={loading}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../../assets/images/logo.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
-
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-            <View style={[styles.progressStep, styles.progressStepActive]} />
-          </View>
-          <Text style={styles.progressText}>Step 5 of 5</Text>
-        </View>
-
-        <View style={styles.formHeader}>
-          <Text style={styles.formTitle}>Almost Done!</Text>
-          <Text style={styles.formSubtitle}>
-            Final details about pricing and payments
-          </Text>
-        </View>
+        <BackButton onPress={handleBack} disabled={loading} />
+        <Logo />
+        <ProgressBar step={5} total={5} />
+        <FormHeader 
+          title="Almost Done!"
+          subtitle="Final details about pricing and payments"
+        />
 
         <View style={styles.formContainer}>
-          {error ? (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{error}</Text>
-            </View>
-          ) : null}
+          {error && <ErrorMessage message={error} />}
 
-          <Text style={styles.sectionTitle}>Pricing Information</Text>
-          
-          <TextInput
-            style={styles.input}
-            placeholder="price range * (e.g., 50-100 MAD)"
-            placeholderTextColor="#999"
-            value={formData.averagePriceRange}
-            onChangeText={(text) => updateFormData('averagePriceRange', text)}
-            editable={!loading}
-          />
-
-          <Text style={styles.helperText}>
-            This helps customers know what to expect
-          </Text>
-
-          <Text style={styles.sectionTitle}>Payment Methods (Optional)</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="(Cash, Card, Online...)"
-            placeholderTextColor="#999"
-            value={formData.paymentMethods}
-            onChangeText={(text) => updateFormData('paymentMethods', text)}
-            editable={!loading}
-          />
-
-          <View style={styles.summaryContainer}>
-            <Text style={styles.summaryTitle}>Registration Summary</Text>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Owner:</Text>
-              <Text style={styles.summaryValue}>{existingData.ownerFullName}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Restaurant:</Text>
-              <Text style={styles.summaryValue}>{existingData.restaurantName}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Cuisine:</Text>
-              <Text style={styles.summaryValue}>{existingData.cuisineType}</Text>
-            </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Pickup:</Text>
-              <Text style={styles.summaryValue}>
-                {existingData.pickupTimeStart} - {existingData.pickupTimeEnd}
-              </Text>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            style={[styles.submitButton, loading && styles.submitButtonDisabled]}
-            onPress={handleSignUp}
-            activeOpacity={0.8}
+          <PricingSection
+            averagePriceRange={formData.averagePriceRange}
+            paymentMethods={formData.paymentMethods}
+            onUpdateField={updateField}
             disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text style={styles.submitButtonText}>Create Restaurant Account</Text>
-            )}
-          </TouchableOpacity>
+          />
 
-          <View style={styles.termsContainer}>
-            <Text style={styles.termsText}>
-              By signing up, you agree to our terms of service and privacy policy
-            </Text>
-          </View>
+          <RegistrationSummary existingData={existingData} />
+
+          <SubmitButton onPress={onSignUp} loading={loading} />
+
+          <TermsNotice />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+
+// Composants de présentation réutilisables
+const BackButton = ({ onPress, disabled }) => (
+  <TouchableOpacity 
+    style={styles.backButton} 
+    onPress={onPress}
+    disabled={disabled}
+  >
+    <Text style={styles.backButtonText}>← Back</Text>
+  </TouchableOpacity>
+);
+
+const Logo = () => (
+  <View style={styles.logoContainer}>
+    <Image
+      source={require('../../../assets/images/logo.png')}
+      style={styles.logo}
+      resizeMode="contain"
+    />
+  </View>
+);
+
+const ProgressBar = ({ step, total }) => (
+  <View style={styles.progressContainer}>
+    <View style={styles.progressBar}>
+      {Array.from({ length: total }).map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.progressStep,
+            index < step && styles.progressStepActive
+          ]}
+        />
+      ))}
+    </View>
+    <Text style={styles.progressText}>Step {step} of {total}</Text>
+  </View>
+);
+
+const FormHeader = ({ title, subtitle }) => (
+  <View style={styles.formHeader}>
+    <Text style={styles.formTitle}>{title}</Text>
+    <Text style={styles.formSubtitle}>{subtitle}</Text>
+  </View>
+);
+
+const ErrorMessage = ({ message }) => (
+  <View style={styles.errorContainer}>
+    <Text style={styles.errorText}>{message}</Text>
+  </View>
+);
+
+const PricingSection = ({ 
+  averagePriceRange, 
+  paymentMethods, 
+  onUpdateField, 
+  disabled 
+}) => (
+  <>
+    <Text style={styles.sectionTitle}>Pricing Information</Text>
+    <TextInput
+      style={styles.input}
+      placeholder="price range * (e.g., 50-100 MAD)"
+      placeholderTextColor="#999"
+      value={averagePriceRange}
+      onChangeText={(text) => onUpdateField('averagePriceRange', text)}
+      editable={!disabled}
+    />
+    <Text style={styles.helperText}>
+      This helps customers know what to expect
+    </Text>
+
+    <Text style={styles.sectionTitle}>Payment Methods (Optional)</Text>
+    <TextInput
+      style={styles.input}
+      placeholder="(Cash, Card, Online...)"
+      placeholderTextColor="#999"
+      value={paymentMethods}
+      onChangeText={(text) => onUpdateField('paymentMethods', text)}
+      editable={!disabled}
+    />
+  </>
+);
+
+const RegistrationSummary = ({ existingData }) => (
+  <View style={styles.summaryContainer}>
+    <Text style={styles.summaryTitle}>Registration Summary</Text>
+    <SummaryItem label="Owner:" value={existingData.ownerFullName} />
+    <SummaryItem label="Restaurant:" value={existingData.restaurantName} />
+    <SummaryItem label="Cuisine:" value={existingData.cuisineType} />
+    <SummaryItem 
+      label="Pickup:" 
+      value={`${existingData.pickupTimeStart} - ${existingData.pickupTimeEnd}`} 
+    />
+  </View>
+);
+
+const SummaryItem = ({ label, value }) => (
+  <View style={styles.summaryItem}>
+    <Text style={styles.summaryLabel}>{label}</Text>
+    <Text style={styles.summaryValue}>{value}</Text>
+  </View>
+);
+
+const SubmitButton = ({ onPress, loading }) => (
+  <TouchableOpacity
+    style={[styles.submitButton, loading && styles.submitButtonDisabled]}
+    onPress={onPress}
+    activeOpacity={0.8}
+    disabled={loading}
+  >
+    {loading ? (
+      <ActivityIndicator color="white" />
+    ) : (
+      <Text style={styles.submitButtonText}>Create Restaurant Account</Text>
+    )}
+  </TouchableOpacity>
+);
+
+const TermsNotice = () => (
+  <View style={styles.termsContainer}>
+    <Text style={styles.termsText}>
+      By signing up, you agree to our terms of service and privacy policy
+    </Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -216,7 +215,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#5a2c1c',
     fontWeight: '600',
-    marginTop:15
+    marginTop: 15
   },
   logoContainer: {
     alignItems: 'center',

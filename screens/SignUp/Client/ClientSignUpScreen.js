@@ -72,7 +72,7 @@ function ClientSignUpScreen({ navigation }) {
       console.log('Registration successful:', response);
 
       Alert.alert(
-        'Registration Successful! 🎉',
+        'Registration Successful!',
         'Welcome to DailyDrop!',
         [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
       );
